@@ -8,15 +8,43 @@ int cache_enabled = 0; /* is cache enabled? 0 no, 1 yes */
 
 int mydisk_init(char const *file_name, int nblocks, int type)
 {
-	/* TODO: 1. use the proper mode to open the disk file
-	 * 2. fill zeros 
-	 */
+
+	// 1. Use the proper mode to open the disk file
+	thefile = fopen(file_name, "w+");
+	
+	//Check for errors opening or creating a new file
+	if(thefile ==  NULL){
+		printf("The specified file could not be opened or created.\n");
+		return 1;
+	}
+
+	disk_type = type;
+
+	// 2. Create a block initialized with the value of zero
+	char emptyBlock[BLOCK_SIZE] = {[0 ... BLOCK_SIZE-1] = 0};
+	char *block_ptr = emptyBlock;
+
+	// 3. Fill the file with zeros
+	//fwrite parameters:
+	//1: Pointer to the array of elements to be written
+	//2: Size in bytes of the elements to be written
+	//3: Number of elements to be written
+	//4: Pointer to the FILE object
+	fwrite(block_ptr, BLOCK_SIZE, nblocks, thefile);
+
 	return 0;
 }
 
 void mydisk_close()
 {
 	/* TODO: clean up whatever done in mydisk_init()*/
+	int isClosed = fclose(thefile);
+
+	if(isClosed != 0){
+		printf("An error occurred closing the disk file.\n");
+	} else{
+		printf("The disk file was closed successfully.\n");
+	}
 }
 
 int mydisk_read_block(int block_id, void *buffer)
