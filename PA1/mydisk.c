@@ -19,6 +19,7 @@ int mydisk_init(char const *file_name, int nblocks, int type)
 	}
 
 	disk_type = type;
+	max_blocks = nblocks;
 
 	// 2. Create a block initialized with the value of zero
 	char emptyBlock[BLOCK_SIZE] = {[0 ... BLOCK_SIZE-1] = 0};
@@ -30,7 +31,7 @@ int mydisk_init(char const *file_name, int nblocks, int type)
 	//2: Size in bytes of the elements to be written
 	//3: Number of elements to be written
 	//4: Pointer to the FILE object
-	fwrite(block_ptr, BLOCK_SIZE, nblocks, thefile);
+	fwrite(block_ptr, BLOCK_SIZE, max_blocks, thefile);
 
 	return 0;
 }
@@ -49,6 +50,21 @@ void mydisk_close()
 
 int mydisk_read_block(int block_id, void *buffer)
 {
+	// Check for incorrect parameters
+ 	if(block_id > max_blocks){
+		printf("The block ID is greater than the maximum number of blocks.\n");
+		return 1;
+	}
+
+	int bufferSize = *(int*)buffer * 8;
+	printf("Buffer size: %d\n", bufferSize);
+	if(bufferSize != BLOCK_SIZE){
+		printf("The buffer size does not match the block size.\n");
+		return 1;
+	} else{
+		printf("Buffer size matches the block size.\n");
+	}
+
 	if (cache_enabled) {
 		/* TODO: 1. check if the block is cached
 		 * 2. if not create a new entry for the block and read from disk
@@ -57,7 +73,7 @@ int mydisk_read_block(int block_id, void *buffer)
 		 */
 		return 0;
 	} else {
-		/* TODO: use standard C functiosn to read from disk
+		/* TODO: use standard C functions to read from disk
 		 */
 		return 0;
 	}
