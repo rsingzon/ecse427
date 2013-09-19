@@ -1,5 +1,6 @@
 #include "mydisk.h"
 #include <string.h>
+#include <stdlib.h>
 
 FILE *thefile;     /* the file that stores all blocks */
 int max_blocks;    /* max number of blocks given at initialization */
@@ -10,7 +11,7 @@ int mydisk_init(char const *file_name, int nblocks, int type)
 {
 
 	// 1. Use the proper mode to open the disk file
-	thefile = fopen(file_name, "w+");
+	thefile = fopen(file_name, "wb+");
 	
 	//Check for errors opening or creating a new file
 	if(thefile ==  NULL){
@@ -22,16 +23,20 @@ int mydisk_init(char const *file_name, int nblocks, int type)
 	max_blocks = nblocks;
 
 	// 2. Create a block initialized with the value of zero
-	char emptyBlock[BLOCK_SIZE] = {[0 ... BLOCK_SIZE-1] = 0};
-	char *block_ptr = emptyBlock;
+	//char emptyBlock[BLOCK_SIZE] = {[0 ... BLOCK_SIZE-1] = 0};
+	char *block_ptr = (char*)malloc(BLOCK_SIZE * nblocks);
+	memset(block_ptr, '0', BLOCK_SIZE * nblocks);
 
 	// 3. Fill the file with zeros
-	//fwrite parameters:
-	//1: Pointer to the array of elements to be written
-	//2: Size in bytes of the elements to be written
-	//3: Number of elements to be written
-	//4: Pointer to the FILE object
 	fwrite(block_ptr, BLOCK_SIZE, max_blocks, thefile);
+
+	//Read file and verify its contents
+	mydisk_close();	
+
+	fopen(file_name, "wb+");
+	fread(block_ptr, BLOCK_SIZE, 1, thefile);	
+
+	printf("Test output:\n%c\n", block_ptr[0]);
 
 	return 0;
 }
@@ -56,6 +61,7 @@ int mydisk_read_block(int block_id, void *buffer)
 		return 1;
 	}
 
+	/*
 	int bufferSize = *(int*)buffer * 8;
 	printf("Buffer size: %d\n", bufferSize);
 	if(bufferSize != BLOCK_SIZE){
@@ -64,6 +70,7 @@ int mydisk_read_block(int block_id, void *buffer)
 	} else{
 		printf("Buffer size matches the block size.\n");
 	}
+	*/
 
 	if (cache_enabled) {
 		/* TODO: 1. check if the block is cached
