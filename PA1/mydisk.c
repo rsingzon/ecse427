@@ -23,7 +23,6 @@ int mydisk_init(char const *file_name, int nblocks, int type)
 	max_blocks = nblocks;
 
 	// 2. Create a block initialized with the value of zero
-	//char emptyBlock[BLOCK_SIZE] = {[0 ... BLOCK_SIZE-1] = 0};
 	char *block_ptr = (char*)malloc(BLOCK_SIZE * nblocks);
 	memset(block_ptr, '0', BLOCK_SIZE * nblocks);
 
@@ -31,12 +30,15 @@ int mydisk_init(char const *file_name, int nblocks, int type)
 	fwrite(block_ptr, BLOCK_SIZE, max_blocks, thefile);
 
 	//Read file and verify its contents
+	/*
 	mydisk_close();	
 
 	fopen(file_name, "wb+");
 	fread(block_ptr, BLOCK_SIZE, 1, thefile);	
 
 	printf("Test output:\n%c\n", block_ptr[0]);
+
+	*/
 
 	return 0;
 }
@@ -56,21 +58,31 @@ void mydisk_close()
 int mydisk_read_block(int block_id, void *buffer)
 {
 	// Check for incorrect parameters
- 	if(block_id > max_blocks){
-		printf("The block ID is greater than the maximum number of blocks.\n");
+ 	if(block_id > (max_blocks * BLOCK_SIZE)){
+		printf("mydisk_read_block: The block ID is greater than the maximum number of blocks.\n");
 		return 1;
 	}
 
 	/*
-	int bufferSize = *(int*)buffer * 8;
-	printf("Buffer size: %d\n", bufferSize);
+	 * This section will read the contents of the specified block by:
+	 * 1. Seek the ID of the block
+	 * 2. Read the content of the block into the buffer
+	 */
+
+	fseek(thefile, block_id, SEEK_SET);
+
+	fread(buffer, BLOCK_SIZE, 1, thefile);
+
+/*
+	int bufferSize = sizeof(buffer)/sizeof(buffer[0]);
+	printf("mydisk_read_block: Buffer size: %d\n", bufferSize);
 	if(bufferSize != BLOCK_SIZE){
 		printf("The buffer size does not match the block size.\n");
 		return 1;
 	} else{
 		printf("Buffer size matches the block size.\n");
 	}
-	*/
+*/
 
 	if (cache_enabled) {
 		/* TODO: 1. check if the block is cached
@@ -88,6 +100,15 @@ int mydisk_read_block(int block_id, void *buffer)
 
 int mydisk_write_block(int block_id, void *buffer)
 {
+	if(block_id > (max_blocks * BLOCK_SIZE)){
+		printf("mydisk_write_block: The block ID is greater than max blocks.\n");
+		return 1;
+	}
+
+	fseek(thefile, block_id, SEEK_SET);
+	fwrite(buffer, BLOCK_SIZE, 1, thefile);
+
+
 	/* TODO: this one is similar to read_block() except that
 	 * you need to mark it dirty
 	 */
@@ -98,6 +119,17 @@ int mydisk_read(int start_address, int nbytes, void *buffer)
 {
 	int offset, remaining, amount, block_id;
 	int cache_hit = 0, cache_miss = 0;
+
+	if(checkReadWriteParams(start_address, nbytes) == 1){
+		return 1;
+	}
+
+	offset = 0;
+	for(offset; offset < nbytes; offset++){
+		mydisk_read_block(start_address + offset, buffer);
+	}
+
+	//Perhaps check if the pointer is null?
 
 	/* TODO: 1. first, always check the parameters
 	 * 2. a loop which process one block each time
@@ -115,9 +147,43 @@ int mydisk_read(int start_address, int nbytes, void *buffer)
 
 int mydisk_write(int start_address, int nbytes, void *buffer)
 {
+
+	if(checkReadWriteParams(start_address, nbytes) == 1){
+		return 1;
+	}
+
+	int offset = 0;
+
+	for(offset; offset < nbytes; offset++){
+		mydisk_write_block(start_address + offset, buffer);
+	}
+
 	/* TODO: similar to read, except the partial write problem
 	 * When a block is modified partially, you need to first read the block,
 	 * modify the portion and then write the whole block back
 	 */
 	return 0;
+}
+
+//Helper functions to check mydisk_read and mydisk_write parameters
+int checkReadWriteParams(int start_address, int nbytes){
+
+	//Check for valid parameters
+	if(start_address < 0 || start_address > (max_blocks * (BLOCK_SIZE-1))){
+		printf("mydisk_read: The start address [%d] is out of bounds.\n", start_address);
+		return 1;
+	}
+
+	/**
+	 * What is the maximum number of bytes that can be read?
+	 */
+	else if(nbytes < 0 || nbytes > max_blocks * BLOCK_SIZE){
+		printf("mydisk_read: nbytes [%d] is out of bounds.\n", nbytes);
+		return 1;
+	}
+
+	else if((nbytes + start_address) > (max_blocks * BLOCK_SIZE)){
+		printf("mydisk_read: The maximum specified address [%d] is out of range.\n", nbytes+start_address);
+		return 1;
+	}
 }
