@@ -10,7 +10,7 @@ int cache_enabled = 0; /* is cache enabled? 0 no, 1 yes */
 int mydisk_init(char const *file_name, int nblocks, int type)
 {
 
-	// 1. Use the proper mode to open the disk file
+	//Open the disk file
 	thefile = fopen(file_name, "wb+");
 	
 	//Check for errors opening or creating a new file
@@ -31,17 +31,6 @@ int mydisk_init(char const *file_name, int nblocks, int type)
 
 	free(block_ptr);
 
-	//Read file and verify its contents
-	/*
-	mydisk_close();	
-
-	fopen(file_name, "wb+");
-	fread(block_ptr, BLOCK_SIZE, 1, thefile);	
-
-	printf("Test output:\n%c\n", block_ptr[0]);
-
-	*/
-
 	return 0;
 }
 
@@ -59,7 +48,7 @@ void mydisk_close()
 
 int mydisk_read_block(int block_id, void *buffer)
 {
-	int bytesToRead = BLOCK_SIZE;
+	int bytesToRead;
 
 	// Check for incorrect parameters
  	if(block_id > (max_blocks * BLOCK_SIZE)){
@@ -67,17 +56,15 @@ int mydisk_read_block(int block_id, void *buffer)
 		return 1;
 	}
 
-	/*
-	 * This section will read the contents of the specified block by:
-	 * 1. Seek the ID of the block
-	 * 2. Read the content of the block into the buffer
-	 */
-
+	//Seek to the correct location in the file
 	fseek(thefile, block_id, SEEK_SET);
 
-	//Truncate if the end address is in the middle of the block
-	if(block_id % (BLOCK_SIZE-1) != 0){
-		bytesToRead = block_id % (BLOCK_SIZE-1);
+	//Check if the start address is at the start of a block
+	if(block_id % BLOCK_SIZE == 0 || block_id % BLOCK_SIZE == 511){
+		bytesToRead = BLOCK_SIZE;
+	} else{
+		//Truncate if the end address is in the middle of the block
+		bytesToRead = block_id % BLOCK_SIZE;
 	}
 
 	fread(buffer, bytesToRead, 1, thefile);
@@ -98,13 +85,24 @@ int mydisk_read_block(int block_id, void *buffer)
 
 int mydisk_write_block(int block_id, void *buffer)
 {
+	int bytesToWrite;
+
 	if(block_id > (max_blocks * BLOCK_SIZE)){
 		printf("mydisk_write_block: The block ID is greater than max blocks.\n");
 		return 1;
 	}
 
+	//Seek to the correct location in the file
 	fseek(thefile, block_id, SEEK_SET);
-	fwrite(buffer, BLOCK_SIZE, 1, thefile);
+
+	//Check if the start address is at the start of a block
+	if(block_id % BLOCK_SIZE == 0 || block_id % BLOCK_SIZE == 511){
+		bytesToWrite = BLOCK_SIZE;
+	} else{
+		bytesToWrite = block_id % BLOCK_SIZE;
+	}
+
+	fwrite(buffer, bytesToWrite, 1, thefile);
 
 
 	/* TODO: this one is similar to read_block() except that
@@ -118,7 +116,8 @@ int mydisk_read(int start_address, int nbytes, void *buffer)
 	int offset, remaining, amount, block_id;
 	int cache_hit = 0, cache_miss = 0;
 
-	if(checkReadWriteParams(start_address, nbytes) == 1){
+	//Check parameters for errors
+	if(checkParams(start_address, nbytes, buffer) == 1){
 		return 1;
 	}
 
@@ -137,8 +136,10 @@ int mydisk_read(int start_address, int nbytes, void *buffer)
 		}
 	}
 
+	//Determine the which block contains the start address
 	block_id = start_address / BLOCK_SIZE;
 
+	//Determine the offset of the first block to read
 	if(start_address % BLOCK_SIZE != 0){
 		offset = start_address % BLOCK_SIZE;
 	} else{
@@ -148,16 +149,21 @@ int mydisk_read(int start_address, int nbytes, void *buffer)
 	printf("Start address: %d\nBytes: %d\n", start_address, nbytes);
 	printf("Block ID: %d\nOffset: %d\n", block_id, offset);
 
-	while(amount < remaining){
-		int targetAddress = block_id + offset;
-
+	while(remaining != 0){
+		int targetAddress = block_id * BLOCK_SIZE;
+		
+		//Include the offset on the first block read
+		if(amount == 0){
+			targetAddress += offset;
+		}
+		
 		mydisk_read_block(targetAddress, buffer);
 		amount++;
+		remaining--;
+		block_id++;
 		
-		printf("Executed read block\n");
+		printf("READ\n");
 	}
-
-	//Perhaps check if the pointer is null?
 
 	/* TODO: 1. first, always check the parameters
 	 * 2. a loop which process one block each time
@@ -176,42 +182,122 @@ int mydisk_read(int start_address, int nbytes, void *buffer)
 int mydisk_write(int start_address, int nbytes, void *buffer)
 {
 
-	if(checkReadWriteParams(start_address, nbytes) == 1){
-		return 1;
-	}
-
-	int offset = 0;
-
-	for(offset; offset < nbytes; offset++){
-		mydisk_write_block(start_address + offset, buffer);
-	}
-
 	/* TODO: similar to read, except the partial write problem
 	 * When a block is modified partially, you need to first read the block,
 	 * modify the portion and then write the whole block back
 	 */
+
+	int offset, remaining, amount, block_id, partialStart, partialEnd;
+
+	if(checkParams(start_address, nbytes, buffer) == 1){
+		return 1;
+	}
+
+	//Set values to determine whether a partial write problem exists
+	partialStart = 0;
+	partialEnd = 0;
+
+	//Number of blocks currently written
+	amount = 0; 		
+
+	//Total number of blocks to write
+	remaining = 1;
+
+	if(nbytes > BLOCK_SIZE){
+		remaining = nbytes / BLOCK_SIZE;
+
+		//Add an additional blocks if there are too many bytes
+		if((nbytes - remaining * BLOCK_SIZE) % BLOCK_SIZE != 0){
+			remaining++;
+			partialEnd = 1;
+		}
+	}
+
+	block_id = start_address / BLOCK_SIZE;
+
+	if(start_address % BLOCK_SIZE != 0){
+		offset = start_address % BLOCK_SIZE;
+		partialStart = 1;
+	} else{
+		offset = 0;
+	}
+
+	int targetAddress = block_id * BLOCK_SIZE;
+
+	//If a block has to be partially written, read it first, 
+	//modify the areas that need to be changed, and write the entire block back
+	if(partialStart == 1){
+		/*
+		 * 1. Allocate space to hold the block tempMemory
+		 * 2. Read the block into tempMemory
+		 * 3. Rewrite from 0 -> offset tempMemory into tempMemory
+		 * 4. Write from tempMemory into file
+		 * 5. Free memory
+		*/
+
+		char *oldData = (char*)malloc(BLOCK_SIZE);
+		memset(oldData, '0', BLOCK_SIZE);
+
+		mydisk_read_block(targetAddress, oldData);
+
+		//memcpy(//destination, source, size n bytes)
+
+		//mydisk_write_block(targetAddress + offset, oldData);
+		//mydisk_write_block(targetAddress, oldData);
+
+		remaining--;
+		amount++;
+		block_id++;
+
+		free(oldData);
+		printf("PARTIAL START WRITE\n");
+	}
+
+	while(remaining > 0){
+		targetAddress = block_id * BLOCK_SIZE;
+
+		//Check if there is a partial write on the last block
+		if(remaining == 1 && partialEnd == 1){
+
+		}
+
+		mydisk_write_block(targetAddress, buffer);
+
+		printf("WRITE\n");
+
+		remaining--;
+		amount++;
+		block_id++;
+	}
+
 	return 0;
 }
 
 //Helper functions to check mydisk_read and mydisk_write parameters
-int checkReadWriteParams(int start_address, int nbytes){
+int checkParams(int start_address, int nbytes, void* buffer)
+{
 
 	//Check for valid parameters
 	if(start_address < 0 || start_address > (max_blocks * (BLOCK_SIZE-1))){
-		printf("mydisk_read: The start address [%d] is out of bounds.\n", start_address);
+		printf("The start address [%d] is out of bounds.\n", start_address);
 		return 1;
 	}
 
-	/**
-	 * What is the maximum number of bytes that can be read?
-	 */
 	else if(nbytes < 0 || nbytes > max_blocks * BLOCK_SIZE){
-		printf("mydisk_read: nbytes [%d] is out of bounds.\n", nbytes);
+		printf("nbytes [%d] is out of bounds.\n", nbytes);
 		return 1;
+	}
+
+	else if(nbytes == 0){
+		printf("The number of bytes to read or write is zero\n");
 	}
 
 	else if((nbytes + start_address) > (max_blocks * BLOCK_SIZE)){
-		printf("mydisk_read: The maximum specified address [%d] is out of range.\n", nbytes+start_address);
+		printf("The maximum specified address [%d] is out of range.\n", nbytes+start_address);
 		return 1;
+	}
+
+	else if(buffer == NULL){
+		printf("The pointer to the buffer is null\n");
 	}
 }
