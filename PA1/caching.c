@@ -13,13 +13,29 @@ struct cache_entry
 
 int cache_blocks;  /* number of blocks for the cache buffer */
 
+int in; 	//Next free position
+int out; 	//Oldest full position
+char *block_ptr;  //Pointer to the memory allocated for the buffer
+
 /* TODO: some helper functions e.g. find_cached_entry(block_id) */
 
 int init_cache(int nblocks)
 {
+
 	/* TODO: allocate proper data structure (ring buffer)
 	 * initialize entry data so that the the ring buffer is empty
-	 */
+		
+ Allocate enough space in memory for a circular queue
+ Create a circular queue, linking the last space in the queue to the first 
+ 
+ */
+
+	//Allocate an area in memory for a circular queue
+  block_ptr = (char*)malloc(BLOCK_SIZE * nblocks);
+	memset(block_ptr, '0', BLOCK_SIZE * nblocks);
+
+	in = 0;
+	out = 0;
 
 	return 0;
 }
@@ -27,6 +43,9 @@ int init_cache(int nblocks)
 int close_cache()
 {
 	/* TODO: release the memory for the ring buffer */
+
+	free(block_ptr);
+
 	return 0;
 }
 

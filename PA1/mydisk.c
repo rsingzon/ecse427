@@ -29,6 +29,8 @@ int mydisk_init(char const *file_name, int nblocks, int type)
 	// 3. Fill the file with zeros
 	fwrite(block_ptr, BLOCK_SIZE, max_blocks, thefile);
 
+	free(block_ptr);
+
 	//Read file and verify its contents
 	/*
 	mydisk_close();	
@@ -45,7 +47,7 @@ int mydisk_init(char const *file_name, int nblocks, int type)
 
 void mydisk_close()
 {
-	/* TODO: clean up whatever done in mydisk_init()*/
+		/* TODO: clean up whatever done in mydisk_init()*/
 	int isClosed = fclose(thefile);
 
 	if(isClosed != 0){
@@ -57,6 +59,8 @@ void mydisk_close()
 
 int mydisk_read_block(int block_id, void *buffer)
 {
+	int bytesToRead = BLOCK_SIZE;
+
 	// Check for incorrect parameters
  	if(block_id > (max_blocks * BLOCK_SIZE)){
 		printf("mydisk_read_block: The block ID is greater than the maximum number of blocks.\n");
@@ -71,18 +75,12 @@ int mydisk_read_block(int block_id, void *buffer)
 
 	fseek(thefile, block_id, SEEK_SET);
 
-	fread(buffer, BLOCK_SIZE, 1, thefile);
-
-/*
-	int bufferSize = sizeof(buffer)/sizeof(buffer[0]);
-	printf("mydisk_read_block: Buffer size: %d\n", bufferSize);
-	if(bufferSize != BLOCK_SIZE){
-		printf("The buffer size does not match the block size.\n");
-		return 1;
-	} else{
-		printf("Buffer size matches the block size.\n");
+	//Truncate if the end address is in the middle of the block
+	if(block_id % (BLOCK_SIZE-1) != 0){
+		bytesToRead = block_id % (BLOCK_SIZE-1);
 	}
-*/
+
+	fread(buffer, bytesToRead, 1, thefile);
 
 	if (cache_enabled) {
 		/* TODO: 1. check if the block is cached
@@ -124,9 +122,39 @@ int mydisk_read(int start_address, int nbytes, void *buffer)
 		return 1;
 	}
 
-	offset = 0;
-	for(offset; offset < nbytes; offset++){
-		mydisk_read_block(start_address + offset, buffer);
+	//Number of blocks currently read
+	amount = 0; 		
+
+	//Total number of blocks to read
+	remaining = 1;
+
+	if(nbytes > BLOCK_SIZE){
+		remaining = nbytes / BLOCK_SIZE;
+
+		//Add an additional blocks if there are too many bytes
+		if((nbytes - remaining * BLOCK_SIZE) % BLOCK_SIZE != 0){
+			remaining++;
+		}
+	}
+
+	block_id = start_address / BLOCK_SIZE;
+
+	if(start_address % BLOCK_SIZE != 0){
+		offset = start_address % BLOCK_SIZE;
+	} else{
+		offset = 0;
+	}
+
+	printf("Start address: %d\nBytes: %d\n", start_address, nbytes);
+	printf("Block ID: %d\nOffset: %d\n", block_id, offset);
+
+	while(amount < remaining){
+		int targetAddress = block_id + offset;
+
+		mydisk_read_block(targetAddress, buffer);
+		amount++;
+		
+		printf("Executed read block\n");
 	}
 
 	//Perhaps check if the pointer is null?
