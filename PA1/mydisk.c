@@ -1,3 +1,10 @@
+//Singzon, Ryan
+//260397455
+
+//ECSE427: Operating Systems
+//Fall 2013
+//Professor Liu
+
 #include "mydisk.h"
 #include <string.h>
 #include <stdlib.h>
@@ -48,21 +55,11 @@ void mydisk_close()
 
 int mydisk_read_block(int block_id, void *buffer)
 {
-	int bytesToRead;
-
 	// Check for incorrect parameters
  	if(block_id > max_blocks){
 		printf("mydisk_read_block: The block ID is greater than the maximum number of blocks.\n");
 		return 1;
 	}
-
-	//Seek to the correct location in the file
-	fseek(thefile, block_id * BLOCK_SIZE, SEEK_SET);
-
-	fread(buffer, BLOCK_SIZE, 1, thefile);
-
-//	printf("Start address: %d\nBytes: %d\n", block_id, bytesToRead);
-//	printf("Block ID: %d\nOffset: %d\n", block_id/BLOCK_SIZE, block_id%BLOCK_SIZE);
 
 	if (cache_enabled) {
 		/* TODO: 1. check if the block is cached
@@ -72,8 +69,13 @@ int mydisk_read_block(int block_id, void *buffer)
 		 */
 		return 0;
 	} else {
-		/* TODO: use standard C functions to read from disk
-		 */
+		int blockOffset = block_id * BLOCK_SIZE;
+
+		//Seek to the correct location in the file
+		fseek(thefile, blockOffset, SEEK_SET);
+
+		fread(buffer, BLOCK_SIZE, 1, thefile);
+
 		return 0;
 	}
 }
@@ -100,7 +102,8 @@ int mydisk_write_block(int block_id, void *buffer)
 
 int mydisk_read(int start_address, int nbytes, void *buffer)
 {
-	int offset, remaining, amount, block_id;
+	int offset, remaining, amount, block_id; 
+	int bytesToRead, remainderBytes;
 	int cache_hit = 0, cache_miss = 0;
 
 	//Check parameters for errors
@@ -108,47 +111,53 @@ int mydisk_read(int start_address, int nbytes, void *buffer)
 		return 1;
 	}
 
-	//Number of blocks currently read
 	amount = 0; 		
-
-	//Total number of blocks to read
 	remaining = 1;
-
-	//Determine the which block contains the start address
 	block_id = start_address / BLOCK_SIZE;
-
-	//Determine the offset of the first block to read
 	offset = start_address % BLOCK_SIZE;
+	bytesToRead = nbytes;
 
 	if(nbytes + offset > BLOCK_SIZE){
 		remaining = nbytes / BLOCK_SIZE;
+		bytesToRead = BLOCK_SIZE - offset;
 		
 		//Determine if the last block is partially filled
 		if((offset + nbytes) % BLOCK_SIZE != 0){
 			remaining++;
+			remainderBytes = (offset + nbytes) % BLOCK_SIZE;
 		}
-	}	
+	}
 
 	while(remaining > 0){
-		printf("READ\n");
-				
+		int blockOffset = block_id * BLOCK_SIZE;
+
 		//Allocate a temporary space in memory to hold the entire block
 		//Move specified content into buffer
 		if(amount == 0 && offset != 0){
+			printf("PARTIAL START READ\n");
 			char *tempBlock = (char*)malloc(BLOCK_SIZE);
 			memset(tempBlock, 0, BLOCK_SIZE);
 
-			if(nbytes + offset > BLOCK_SIZE){
-				nbytes = BLOCK_SIZE - offset;
-			}
-
 			mydisk_read_block(block_id, tempBlock);	
-			memcpy(buffer+block_id*BLOCK_SIZE, tempBlock+offset, nbytes);
+
+			memcpy(buffer, tempBlock+offset, bytesToRead);
 
 			free(tempBlock);
 
-			offset = 0;
+		} else if(remaining == 1 && remainderBytes != 0){
+			printf("PARTIAL END READ\n");
+
+			char *tempBlock = (char*)malloc(BLOCK_SIZE);
+			memset(tempBlock, 0, BLOCK_SIZE);
+
+			mydisk_read_block(block_id, tempBlock);	
+						
+			memcpy(buffer+bytesToRead, tempBlock, remainderBytes);
+
+			free(tempBlock);
+
 		} else{
+			printf("READ\n");
 			mydisk_read_block(block_id, buffer);	
 		}
 		
@@ -180,7 +189,7 @@ int mydisk_write(int start_address, int nbytes, void *buffer)
 	 */
 
 	int offset, remaining, amount, block_id;
-	int partialStart, partialEnd, remainderBytes;
+	int partialStart, partialEnd, remainderBytes, bytesToWrite;
 
 	if(checkParams(start_address, nbytes, buffer) == 1){
 		return 1;
@@ -190,14 +199,10 @@ int mydisk_write(int start_address, int nbytes, void *buffer)
 	partialStart = 0;
 	partialEnd = 0;
 
-	//Number of blocks currently written
 	amount = 0; 
-
-	//Total number of blocks to write
 	remaining = 1;
-
-	//Offset of first block
 	offset = start_address % BLOCK_SIZE;
+	bytesToWrite = BLOCK_SIZE-offset;
 
 	if(offset != 0){
 		partialStart = 1;
@@ -216,59 +221,54 @@ int mydisk_write(int start_address, int nbytes, void *buffer)
 
 	block_id = start_address / BLOCK_SIZE;
 
-	//If a block has to be partially written, read it first, 
-	//modify the areas that need to be changed, and write the entire block back
-	if(partialStart == 1){
-		printf("PARTIAL START WRITE\n");
-
-		char *tempBlock = (char*)malloc(BLOCK_SIZE);
-		memset(tempBlock, 0, BLOCK_SIZE);
-
-		mydisk_read_block(block_id, tempBlock);
-
-		int bytesToWrite = BLOCK_SIZE-offset;
-
-		memcpy(tempBlock+offset, buffer, bytesToWrite);
-
-		memcpy(buffer, tempBlock, BLOCK_SIZE);
-		//memcpy(//destination, source, size n bytes)
-
-		mydisk_write_block(block_id, buffer);
-		//printf("********\n%s\n***********\n", (char*)buffer);
-
-		free(tempBlock);
-
-		block_id++;
-		remaining--;
-		amount++;
-	}
-
 	while(remaining > 0){
-			
-		//Check if there is a partial write on the last block
-		if(remaining == 1 && partialEnd == 1){
+		int blockOffset = block_id * BLOCK_SIZE;
+				
+		//If a block has to be partially written, read it first, 
+		//modify the areas that need to be changed, and write the entire block back
+		if(amount == 0 && partialStart == 1){
+			printf("PARTIAL START WRITE\n");
+			char *tempBlock = (char*)malloc(BLOCK_SIZE);
+			memset(tempBlock, 0, BLOCK_SIZE);
+
+			mydisk_read_block(block_id, tempBlock);
+
+			memcpy(tempBlock + offset, buffer, bytesToWrite);
+		
+			mydisk_write_block(block_id, tempBlock);
+
+			free(tempBlock);
+
+		} else if(remaining == 1 && partialEnd == 1){
 			printf("PARTIAL END WRITE\n");
 			char *tempBlock = (char*)malloc(BLOCK_SIZE);
 			memset(tempBlock, 0, BLOCK_SIZE);
 
 			mydisk_read_block(block_id, tempBlock);
 
-			memcpy(tempBlock, buffer+block_id*BLOCK_SIZE, remainderBytes);
-			printf("remainderBytes: %d\n", remainderBytes);
-
-			memcpy(buffer+block_id*BLOCK_SIZE, tempBlock, BLOCK_SIZE);
-			//memcpy(//destination, source, size n bytes)
+			memcpy(tempBlock, buffer + bytesToWrite, remainderBytes);
+		
+			mydisk_write_block(block_id, tempBlock);
 
 			free(tempBlock);
+
 		} else{
 			printf("WRITE\n");
+
+			char *tempBlock = (char*)malloc(BLOCK_SIZE);
+			memset(tempBlock, 0, BLOCK_SIZE);
+
+			mydisk_read_block(block_id, tempBlock);
+
+			memcpy(tempBlock, buffer, BLOCK_SIZE);
+		
+			mydisk_write_block(block_id, tempBlock);
+
+			free(tempBlock);
 		} 
 		
-		mydisk_write_block(block_id, buffer);			
-		//printf("Buffer content: %s\n", (char*)buffer+block_id*BLOCK_SIZE);
-		//printf("********\n%s\n***********\n", (char*)buffer);
 		
-
+		
 		remaining--;
 		amount++;
 		block_id++;
