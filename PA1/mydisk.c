@@ -168,17 +168,6 @@ int mydisk_read(int start_address, int nbytes, void *buffer)
 		block_id++;
 	}
 
-	/* TODO: 1. first, always check the parameters
-	 * 2. a loop which process one block each time
-	 * 2.1 offset means the in-block offset
-	 * amount means the number of bytes to be moved from the block
-	 * (starting from offset)
-	 * remaining means the remaining bytes before final completion
-	 * 2.2 get one block, copy the proper portion
-	 * 2.3 update offset, amount and remaining
-	 * in terms of latency calculation, monitor if cache hit/miss
-	 * for each block access
-	 */
 	return 0;
 }
 
