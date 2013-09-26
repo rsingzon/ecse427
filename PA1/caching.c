@@ -1,3 +1,10 @@
+//Singzon, Ryan
+//260397455
+
+//ECSE427: Operating Systems
+//Fall 2013
+//Professor Liu
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -21,17 +28,13 @@ char *block_ptr;  //Pointer to the memory allocated for the buffer
 
 int init_cache(int nblocks)
 {
-
+	
 	/* TODO: allocate proper data structure (ring buffer)
 	 * initialize entry data so that the the ring buffer is empty
-		
- Allocate enough space in memory for a circular queue
- Create a circular queue, linking the last space in the queue to the first 
- 
- */
+  	 */
 
 	//Allocate an area in memory for a circular queue
-  block_ptr = (char*)malloc(BLOCK_SIZE * nblocks);
+  	block_ptr = (char*)malloc(BLOCK_SIZE * nblocks);
 	memset(block_ptr, '0', BLOCK_SIZE * nblocks);
 
 	in = 0;
@@ -42,8 +45,6 @@ int init_cache(int nblocks)
 
 int close_cache()
 {
-	/* TODO: release the memory for the ring buffer */
-
 	free(block_ptr);
 
 	return 0;

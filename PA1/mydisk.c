@@ -17,10 +17,8 @@ int cache_enabled = 0; /* is cache enabled? 0 no, 1 yes */
 int mydisk_init(char const *file_name, int nblocks, int type)
 {
 
-	//Open the disk file
 	thefile = fopen(file_name, "wb+");
 	
-	//Check for errors opening or creating a new file
 	if(thefile ==  NULL){
 		printf("The specified file could not be opened or created.\n");
 		return 1;
@@ -43,7 +41,6 @@ int mydisk_init(char const *file_name, int nblocks, int type)
 
 void mydisk_close()
 {
-	/* TODO: clean up whatever done in mydisk_init()*/
 	int isClosed = fclose(thefile);
 
 	if(isClosed != 0){
@@ -67,6 +64,8 @@ int mydisk_read_block(int block_id, void *buffer)
 		 * 3. fill the requested buffer with the data in the entry 
 		 * 4. return proper return code
 		 */
+
+
 		return 0;
 	} else {
 		int blockOffset = block_id * BLOCK_SIZE;
@@ -134,7 +133,6 @@ int mydisk_read(int start_address, int nbytes, void *buffer)
 		//Allocate a temporary space in memory to hold the entire block
 		//Move specified content into buffer
 		if(amount == 0 && offset != 0){
-			printf("PARTIAL START READ\n");
 			char *tempBlock = (char*)malloc(BLOCK_SIZE);
 			memset(tempBlock, 0, BLOCK_SIZE);
 
@@ -145,8 +143,6 @@ int mydisk_read(int start_address, int nbytes, void *buffer)
 			free(tempBlock);
 
 		} else if(remaining == 1 && remainderBytes != 0){
-			printf("PARTIAL END READ\n");
-
 			char *tempBlock = (char*)malloc(BLOCK_SIZE);
 			memset(tempBlock, 0, BLOCK_SIZE);
 
@@ -157,8 +153,14 @@ int mydisk_read(int start_address, int nbytes, void *buffer)
 			free(tempBlock);
 
 		} else{
-			printf("READ\n");
-			mydisk_read_block(block_id, buffer);	
+			char *tempBlock = (char*)malloc(BLOCK_SIZE);
+			memset(tempBlock, 0, BLOCK_SIZE);
+
+			mydisk_read_block(block_id, tempBlock);	
+						
+			memcpy(buffer, tempBlock, BLOCK_SIZE);
+
+			free(tempBlock);	
 		}
 		
 		amount++;
@@ -182,12 +184,6 @@ int mydisk_read(int start_address, int nbytes, void *buffer)
 
 int mydisk_write(int start_address, int nbytes, void *buffer)
 {
-
-	/* TODO: similar to read, except the partial write problem
-	 * When a block is modified partially, you need to first read the block,
-	 * modify the portion and then write the whole block back
-	 */
-
 	int offset, remaining, amount, block_id;
 	int partialStart, partialEnd, remainderBytes, bytesToWrite;
 
@@ -227,7 +223,6 @@ int mydisk_write(int start_address, int nbytes, void *buffer)
 		//If a block has to be partially written, read it first, 
 		//modify the areas that need to be changed, and write the entire block back
 		if(amount == 0 && partialStart == 1){
-			printf("PARTIAL START WRITE\n");
 			char *tempBlock = (char*)malloc(BLOCK_SIZE);
 			memset(tempBlock, 0, BLOCK_SIZE);
 
@@ -240,7 +235,6 @@ int mydisk_write(int start_address, int nbytes, void *buffer)
 			free(tempBlock);
 
 		} else if(remaining == 1 && partialEnd == 1){
-			printf("PARTIAL END WRITE\n");
 			char *tempBlock = (char*)malloc(BLOCK_SIZE);
 			memset(tempBlock, 0, BLOCK_SIZE);
 
@@ -253,22 +247,9 @@ int mydisk_write(int start_address, int nbytes, void *buffer)
 			free(tempBlock);
 
 		} else{
-			printf("WRITE\n");
-
-			char *tempBlock = (char*)malloc(BLOCK_SIZE);
-			memset(tempBlock, 0, BLOCK_SIZE);
-
-			mydisk_read_block(block_id, tempBlock);
-
-			memcpy(tempBlock, buffer, BLOCK_SIZE);
-		
-			mydisk_write_block(block_id, tempBlock);
-
-			free(tempBlock);
+			mydisk_write_block(block_id, buffer + bytesToWrite);
 		} 
-		
-		
-		
+		 
 		remaining--;
 		amount++;
 		block_id++;
