@@ -85,7 +85,7 @@ int main()
 	int size;
 
 	mydisk_init("diskfile", MAX_BLOCKS, 0);
-	init_cache(CACHED_BLOCKS);
+	//init_cache(CACHED_BLOCKS);
 	
 	/* Test case 1: read/write block */
 	size = BLOCK_SIZE;
@@ -134,11 +134,46 @@ int main()
 	init_cache(CACHED_BLOCKS);
 	get_cached_block(2);
 
-	close_cache();
 	printf("Cache initialized\n");
 	
-	
+	//REPEAT TESTS WITH CACHE ENABLED
 
+	/* Test case 1: read/write block */
+	size = BLOCK_SIZE;
+	memset(buffer, 0, size);
+	strcpy(buffer, "hello world\n");
+	mydisk_write_block(0, buffer);
+	memset(buffer2, 0, size);
+	mydisk_read_block(0, buffer2);
+	check_test(memcmp(buffer2, "hello world\n", 13));
+
+	/* Test case 2: basic read/write */
+	memset(buffer, 0, size);
+	mydisk_read(0, 13, buffer);
+	check_test(memcmp(buffer, "hello world\n", 13));
+
+	/* Test case 3: read in the middle */
+	memset(buffer, 0, BLOCK_SIZE);
+	mydisk_read(8, 5, buffer);
+	check_test(memcmp(buffer, "rld\n", 5));
+
+	/* Test case 4: read/write across blocks */
+	size = BLOCK_SIZE;
+	rand_str(buffer, size);
+	mydisk_write(144, size, buffer);
+	memset(buffer2, 0, size);
+	mydisk_read(144, size, buffer2);
+	check_test(memcmp(buffer, buffer2, size));
+
+	/* Test case 5: large read/write */
+	size = BLOCK_SIZE * (MAX_BLOCKS - 1);
+	rand_str(buffer, size);
+	mydisk_write(276, size, buffer);
+	mydisk_read(276, size, buffer2);
+	check_test(memcmp(buffer, buffer2, size));
+
+	check_test(stress_test());
+	check_test(stress_test2());
 
 	close_cache();
 	mydisk_close();

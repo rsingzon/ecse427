@@ -94,15 +94,14 @@ void *create_cached_block(int block_id)
 	struct cache_entry newBlock = {block_id, 0, *emptyBlock};
 
 	//Check if there is a dirty block at the oldest location in the queue
-//	if(*queue[in * cache_size] != NULL){	}
+//	if(*queue[out] != NULL){	}
 	
-//	entry_ptr = (int*)(in * cache_size); 
 	queue[in] = newBlock;
 
 	in++;
 	in = in % cache_blocks;
 
-	return NULL;
+	return &queue[in];
 }
 
 void mark_dirty(int block_id)

@@ -9,6 +9,14 @@
 #include <string.h>
 #include <stdlib.h>
 
+/* The cache entry struct */
+struct cache_entry
+{
+	int block_id;
+	int is_dirty;
+	char content[BLOCK_SIZE];
+};
+
 FILE *thefile;     /* the file that stores all blocks */
 int max_blocks;    /* max number of blocks given at initialization */
 int disk_type;     /* disk type, 0 for HDD and 1 for SSD */
@@ -52,6 +60,9 @@ void mydisk_close()
 
 int mydisk_read_block(int block_id, void *buffer)
 {
+	struct cache_entry *entry_ptr;
+	int blockOffset = block_id * BLOCK_SIZE;
+
 	// Check for incorrect parameters
  	if(block_id > max_blocks){
 		printf("mydisk_read_block: The block ID is greater than the maximum number of blocks.\n");
@@ -64,11 +75,26 @@ int mydisk_read_block(int block_id, void *buffer)
 		 * 3. fill the requested buffer with the data in the entry 
 		 * 4. return proper return code
 		 */
+		
+		//Check if the block is cached
+		//if(find_cached_entry(block_id)){}
+		
+		//If not, create a new entry for the block
+		entry_ptr = create_cached_block(block_id);
+		
+		char *tempBlock = (char*)malloc(BLOCK_SIZE);
+		memset(tempBlock, 0, BLOCK_SIZE);
 
+		fseek(thefile, blockOffset, SEEK_SET);
+		fread(tempBlock, BLOCK_SIZE, 1, thefile);
 
+		struct cache_entry entry = *(struct cache_entry*)entry_ptr;
+		//Assign the content of the block to its corresponding entry in the queue
+
+		free(tempBlock);
 		return 0;
 	} else {
-		int blockOffset = block_id * BLOCK_SIZE;
+		
 
 		//Seek to the correct location in the file
 		fseek(thefile, blockOffset, SEEK_SET);
@@ -257,3 +283,15 @@ int checkParams(int start_address, int nbytes, void* buffer)
 		printf("The pointer to the buffer is null\n");
 	}
 }
+
+void enable_cache()
+{
+	cache_enabled = 1;
+}
+
+void disable_cache()
+{
+	cache_enabled = 0;
+}
+
+
