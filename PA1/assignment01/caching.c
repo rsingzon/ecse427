@@ -23,16 +23,34 @@ int cache_blocks;  	//Number of blocks for the cache buffer
 int in; 		//Next free position
 int out; 		//Oldest full position
 char *block_ptr;  	//Pointer to the memory allocated for the buffer
+int cache_size;		//Offset for pointer to the cache
 struct cache_entry *queue;	//Pointer to the circular queue
-struct cache_entry** entry_ptr;	//Pointer to the entries in the queue
+struct cache_entry *entry_ptr;	//Pointer to the entries in the queue
+
+
+//Helper function to find a cached entry
+int find_cached_entry(block_id)
+{
+	//If entry found
+	return 1;
+
+	//else
+	//return 0;
+}
 
 int init_cache(int nblocks)
 {
 	in = 0;
 	out = 0;
-	cache_blocks = nblocks;	
 
+	cache_blocks = nblocks;	
+	cache_size = cache_blocks * sizeof(struct cache_entry);
+
+	//Initialize an empty queue
 	queue = (struct cache_entry*)malloc(cache_blocks*sizeof(struct cache_entry));
+	memset(queue, 0, cache_blocks * sizeof(struct cache_entry));
+
+	enable_cache();
 
 	return 0;
 }
@@ -45,6 +63,8 @@ int close_cache()
 
 
 	//free(cache block);
+
+	disable_cache();
 	return 0;
 }
 
@@ -54,15 +74,8 @@ void *get_cached_block(int block_id)
 	 *       or return NULL if not found 
 	 */
 
-	int i = 0;
-	for(i = 0; i < cache_blocks; i++){
-		
-		
-	}
-
 	out++;
 	out = out % cache_blocks;
-	
 	
 	return NULL;
 }
@@ -72,15 +85,20 @@ void *create_cached_block(int block_id)
 	char emptyBlock[BLOCK_SIZE];
 
 	/* TODO: 	
-	 * 1. Create a new entry
-	 * 2. Insert it into the ring buffer (It might kick an exisitng entry) 
-	 * 3. Remember to write dirty block back to disk 
+	 * 1. Remember to write dirty block back to disk 
 	 * Note that: think if you can use mydisk_write_block() to 
 	 * flush dirty blocks to disk
 	 */
 
+	//Insert a new cache entry into the queue
 	struct cache_entry newBlock = {block_id, 0, *emptyBlock};
+
+	//Check if there is a dirty block at the oldest location in the queue
+//	if(*queue[in * cache_size] != NULL){	}
 	
+//	entry_ptr = (int*)(in * cache_size); 
+	queue[in] = newBlock;
+
 	in++;
 	in = in % cache_blocks;
 
