@@ -74,9 +74,9 @@ int stress_test2()
 
 void check_test(int v) {
 	if (v) {
-		printf("FAILED\n\n\n\n\n\n");
+		printf("FAILED\n");
 	} else {
-		printf("PASS\n\n\n\n\n\n");
+		printf("PASS\n");
 	}
 }
 

@@ -72,7 +72,6 @@ int mydisk_read_block(int block_id, void *buffer)
 
 		//Seek to the correct location in the file
 		fseek(thefile, blockOffset, SEEK_SET);
-
 		fread(buffer, BLOCK_SIZE, 1, thefile);
 
 		return 0;
@@ -115,6 +114,7 @@ int mydisk_read(int start_address, int nbytes, void *buffer)
 	block_id = start_address / BLOCK_SIZE;
 	offset = start_address % BLOCK_SIZE;
 	bytesToRead = nbytes;
+	remainderBytes = nbytes % BLOCK_SIZE;
 
 	if(nbytes + offset > BLOCK_SIZE){
 		remaining = nbytes / BLOCK_SIZE;
@@ -129,40 +129,26 @@ int mydisk_read(int start_address, int nbytes, void *buffer)
 
 	while(remaining > 0){
 		int blockOffset = block_id * BLOCK_SIZE;
-
-		//Allocate a temporary space in memory to hold the entire block
-		//Move specified content into buffer
-		if(amount == 0 && offset != 0){
-			char *tempBlock = (char*)malloc(BLOCK_SIZE);
-			memset(tempBlock, 0, BLOCK_SIZE);
-
-			mydisk_read_block(block_id, tempBlock);	
-
+		char *tempBlock = (char*)malloc(BLOCK_SIZE);
+		memset(tempBlock, 0, BLOCK_SIZE);
+		mydisk_read_block(block_id, tempBlock);	
+			
+		if(amount == 0 && remaining == 1){
+			//Content is contained in just one block
+			memcpy(buffer, tempBlock+offset, remainderBytes);
+		} else if(amount == 0 && offset != 0){
+			//First block is partially full
 			memcpy(buffer, tempBlock+offset, bytesToRead);
-
-			free(tempBlock);
-
 		} else if(remaining == 1 && remainderBytes != 0){
-			char *tempBlock = (char*)malloc(BLOCK_SIZE);
-			memset(tempBlock, 0, BLOCK_SIZE);
-
-			mydisk_read_block(block_id, tempBlock);	
-						
+			//Last block is partially full
 			memcpy(buffer+bytesToRead, tempBlock, remainderBytes);
-
-			free(tempBlock);
-
-		} else{
-			char *tempBlock = (char*)malloc(BLOCK_SIZE);
-			memset(tempBlock, 0, BLOCK_SIZE);
-
-			mydisk_read_block(block_id, tempBlock);	
-						
+		} else{	
+			//All in between blocks
 			memcpy(buffer, tempBlock, BLOCK_SIZE);
-
-			free(tempBlock);	
 		}
-		
+
+		free(tempBlock);		
+
 		amount++;
 		remaining--;
 		block_id++;
@@ -212,30 +198,25 @@ int mydisk_write(int start_address, int nbytes, void *buffer)
 		//If a block has to be partially written, read it first, 
 		//modify the areas that need to be changed, and write the entire block back
 		if(amount == 0 && partialStart == 1){
+			//The first block is partially full
 			char *tempBlock = (char*)malloc(BLOCK_SIZE);
 			memset(tempBlock, 0, BLOCK_SIZE);
-
 			mydisk_read_block(block_id, tempBlock);
-
 			memcpy(tempBlock + offset, buffer, bytesToWrite);
-		
 			mydisk_write_block(block_id, tempBlock);
-
 			free(tempBlock);
 
 		} else if(remaining == 1 && partialEnd == 1){
+			//The last block is partially full
 			char *tempBlock = (char*)malloc(BLOCK_SIZE);
 			memset(tempBlock, 0, BLOCK_SIZE);
-
 			mydisk_read_block(block_id, tempBlock);
-
 			memcpy(tempBlock, buffer + bytesToWrite, remainderBytes);
-		
 			mydisk_write_block(block_id, tempBlock);
-
 			free(tempBlock);
 
 		} else{
+			//Write all in between blocks
 			mydisk_write_block(block_id, buffer + bytesToWrite);
 		} 
 		 
