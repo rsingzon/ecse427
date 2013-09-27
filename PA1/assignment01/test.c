@@ -130,6 +130,16 @@ int main()
 	check_test(stress_test());
 	check_test(stress_test2());
 
+	//Tests for caching
+	init_cache(CACHED_BLOCKS);
+	get_cached_block(2);
+
+	close_cache();
+	printf("Cache initialized\n");
+	
+	
+
+
 	close_cache();
 	mydisk_close();
 	return 0;
