@@ -1,0 +1,17 @@
+Specification Notes:
+
+Primary Goal: Implement a Simple File System (SFS)
+
+Contains features:
+	-limits max length for file and directory names
+	-single level directory
+	-opens files and allows them to be read and written to
+
+Functions to be implemented:
+
+int sfs_mkfs()
+	-> Possibly already implemented?
+	-> 
+
+sfs_superblock_t *sfs_print_info()
+
