@@ -33,7 +33,11 @@ static void sfs_flush_freemap()
 	size_t i;
 	blkid bid = 1;
 	char *p = (char *)freemap;
+
+
 	/* TODO: write freemap block one by one */
+
+	
 }
 
 /* 
@@ -46,35 +50,67 @@ static blkid sfs_alloc_block()
 
 	//Renaming variables i and j to be more specific
 	u32 fm_blk, fm_byte;
-
-	/* TODO: find a freemap entry that has a free block */
+	blkid free_block_id;				
 	
+	//Search each freemap block
 	for(fm_blk = 0; fm_blk < sb.nfreemap_blocks; fm_blk++){
 		//Read the freemap block located at the block ID
+		int count;
 		int freemap_id = fm_blk + 1;
-		char freemap_ptr[BLOCK_SIZE];
 
-		sfs_read_block(freemap_ptr, freemap_id);
+		sfs_read_block(freemap, freemap_id);
 		
-
 		/* TODO: find out which bit in the entry is zero,
 		   set the bit, flush and return the bid
 		*/
+		//Search each index of the freemap block
 		for(fm_byte = 0; fm_byte < BLOCK_SIZE; fm_byte++){
 
-			u32 bitmap = freemap_ptr[fm_byte];
+			u32 bitmap = freemap[fm_byte];
 
 			if(bitmap & 0xFF != 0){
 				//There is a free bit at this index in the freemap
 				//BID = BLOCK ID
 				printf("Free block at freemap[%d]\n", fm_byte);
 				
-				//Create a mask to find the first free bit
+				u32 mask = 0x1;
+				u32 result;
+				count = 0;
 				
+				//Search each bit of the freemap block
+				while(count < SFS_NBITS_IN_FREEMAP_ENTRY){
+					
+					result = bitmap & mask;
 
+					printf("Bitmap: %#08x\n", bitmap);
+					printf("Result: %#08x\n", result);
+					printf("Mask  : %#08x\n", mask);
+
+					if(result == mask){
+						printf("Block %d occupied\n", count);
+						printf("\n");
+						mask = mask << 1;
+						count++;
+						
+					} else{
+						free_block_id = fm_byte * SFS_NBITS_IN_FREEMAP_ENTRY + count;
+						printf("Block %d free\n", count);
+
+						//Set the bit and flush to disk
+						u32 newBitmap = bitmap | mask;
+						freemap[fm_byte] = newBitmap;
+
+						//Flush freemap to disk
+						sfs_write_block(freemap, freemap_id);
+						
+						/* TODO: FIGURE OUT FLUSH FREEMAP */
+						//sfs_flush_freemap();
+
+						return free_block_id;
+					}
+				}
 			}
 		}
-
 	}
 	
 
@@ -162,10 +198,11 @@ static blkid sfs_find_dir(char *dirname)
 	/* TODO: start from the sb.first_dir, traverse the linked list */
 	dir_bid = sb.first_dir;
 	printf("ID of first dir: %d\n", sb.first_dir);
+	sfs_dirblock_t *block_ptr;
 
 	while(dir_bid != 0){
 
-		sfs_dirblock_t *block_ptr;
+		
 		sfs_read_block(block_ptr, dir_bid);
 
 		dir = *block_ptr;
@@ -241,30 +278,80 @@ sfs_superblock_t *sfs_print_info()
  */
 int sfs_mkdir(char *dirname)
 {
+	//Check if the directory has a valid name
+	if(sizeof(dirname) > 120){
+		printf("Dir name exceeds max allowed characters.\n");
+		return -1;
+	}
+
+	printf("Size of struct: %lx\n", sizeof(sfs_dirblock_t));
+
 	/* TODO: test if the dir exists */
 	if(sb.first_dir != 0){
-		sfs_find_dir(dirname);
-		return -1;
-
+		if(sfs_find_dir(dirname) != 0){
+			return -1;
+		} 
 	} else{
 		printf("The specified directory does not exist\n");
 		
-		char testArray[BLOCK_SIZE];
+		//Initialize variables
+		blkid next_dir;
+		sfs_dirblock_t *block_ptr;
+		sfs_dirblock_t dir;
 
 		//Insert a new directory into the linkedList
 		//Helper functions: 
 		//sfs_find_dir, sfs_alloc_block, sfs_free_block
 		//sfs_flush_freemap
-		/**
-			1. Allocate space for a new block
-		*/
+	
+		/* TODO: insert a new dir to the linked list */
 
-		sfs_alloc_block();
+		//1. Allocate space for a new block
+		blkid new_bid = sfs_alloc_block();
+
+		//2. Set the next_dir in the last directory block
+		next_dir = sb.first_dir;
+		sfs_read_block(block_ptr, next_dir);
+		dir = *block_ptr;
+
+		if(next_dir == 0){
+			dir.next_dir = new_bid;
+		} else{
+			while(next_dir != 0){	
+				sfs_read_block(block_ptr, next_dir);
+				dir = *block_ptr;
+				next_dir = dir.next_dir;
+				
+				if(next_dir == 0){
+					dir.next_dir = new_bid;
+				}
+			}
+		}
+		printf("Next directory block: %d\n", new_bid);
+
+		//3. Set the name of the directory
+		sfs_read_block(block_ptr, new_bid);
+		
+		//Create a temporary dirblock to copy to the correct location
+		//sfs_dirblock_t temp_dir;	
+
+		//void *voidPointer = block_ptr + sizeof(sfs_dirblock_t);
+
+		//Create a dirblock struct at the address at block_ptr
+		//memcpy(block_ptr, temp_dir, sizeof(sfs_dirblock_t));
+
+		dir = *block_ptr;
+
+		//dir.dir_name = dirname;
+
+		
+
+		//printf("ID of last directory: %d", last_dir_id);
 	}
 
 
 
-	/* TODO: insert a new dir to the linked list */
+	
 	return 0;
 }
 
