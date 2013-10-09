@@ -68,7 +68,7 @@ static blkid sfs_alloc_block()
 
 			u32 bitmap = freemap[fm_byte];
 
-			if(bitmap & 0xFF != 0){
+			if(bitmap & 0xFFFF != 0){
 				//There is a free bit at this index in the freemap
 				//BID = BLOCK ID
 				printf("Free block at freemap[%d]\n", fm_byte);
@@ -94,7 +94,7 @@ static blkid sfs_alloc_block()
 						
 					} else{
 						free_block_id = fm_byte * SFS_NBITS_IN_FREEMAP_ENTRY + count;
-						printf("Block %d free\n", count);
+						printf("Block %d free\n\n", count);
 
 						//Set the bit and flush to disk
 						u32 newBitmap = bitmap | mask;
@@ -198,14 +198,14 @@ static blkid sfs_find_dir(char *dirname)
 	/* TODO: start from the sb.first_dir, traverse the linked list */
 	dir_bid = sb.first_dir;
 	printf("ID of first dir: %d\n", sb.first_dir);
-	sfs_dirblock_t *block_ptr;
+	char block_ptr[BLOCK_SIZE];
 
 	while(dir_bid != 0){
 
 		
 		sfs_read_block(block_ptr, dir_bid);
 
-		dir = *block_ptr;
+		dir = *(sfs_dirblock_t*)block_ptr;
 
 		if(dirname == dir.dir_name){
 			return dir_bid;
@@ -296,7 +296,7 @@ int sfs_mkdir(char *dirname)
 		
 		//Initialize variables
 		blkid next_dir;
-		sfs_dirblock_t *block_ptr;
+		char block_ptr[BLOCK_SIZE];
 		sfs_dirblock_t dir;
 
 		//Insert a new directory into the linkedList
@@ -312,14 +312,15 @@ int sfs_mkdir(char *dirname)
 		//2. Set the next_dir in the last directory block
 		next_dir = sb.first_dir;
 		sfs_read_block(block_ptr, next_dir);
-		dir = *block_ptr;
+		dir = *(sfs_dirblock_t*)block_ptr;
 
 		if(next_dir == 0){
-			dir.next_dir = new_bid;
+			
+			sb.first_dir = new_bid;
 		} else{
 			while(next_dir != 0){	
 				sfs_read_block(block_ptr, next_dir);
-				dir = *block_ptr;
+				dir = *(sfs_dirblock_t*)block_ptr;
 				next_dir = dir.next_dir;
 				
 				if(next_dir == 0){
@@ -329,28 +330,19 @@ int sfs_mkdir(char *dirname)
 		}
 		printf("Next directory block: %d\n", new_bid);
 
-		//3. Set the name of the directory
+		//Create a temporary directory and initialize its members
+		sfs_dirblock_t temp_dir;
+		temp_dir.next_dir = 0;
+		strcpy(temp_dir.dir_name, dirname);
+
+		//Write the temporary block into the disk
+		sfs_write_block(&temp_dir, new_bid);
+
+		//Read block back for testing purposes
 		sfs_read_block(block_ptr, new_bid);
-		
-		//Create a temporary dirblock to copy to the correct location
-		//sfs_dirblock_t temp_dir;	
-
-		//void *voidPointer = block_ptr + sizeof(sfs_dirblock_t);
-
-		//Create a dirblock struct at the address at block_ptr
-		//memcpy(block_ptr, temp_dir, sizeof(sfs_dirblock_t));
-
-		dir = *block_ptr;
-
-		//dir.dir_name = dirname;
-
-		
-
-		//printf("ID of last directory: %d", last_dir_id);
+		dir = *(sfs_dirblock_t*)block_ptr; 
+		printf("New block name: %s\n", dir.dir_name);
 	}
-
-
-
 	
 	return 0;
 }
@@ -362,6 +354,23 @@ int sfs_mkdir(char *dirname)
 int sfs_rmdir(char *dirname)
 {
 	/* TODO: check if the dir exists */
+	
+	if(sb.first_dir == 0){
+		//The superblock does not point to any directories
+		return -1;
+	} else{
+		
+		blkid dir_bid = sfs_find_dir(dirname);
+
+		if(dir_bid == 0){
+			//The directory does not exist in sfs
+			return -1;
+		} else{
+			//Remove the specified bid from sfs
+
+		}
+	}
+
 	/* TODO: check if no files */
 	/* TODO: go thru the linked list and delete the dir*/
 	return 0;
@@ -373,7 +382,26 @@ int sfs_rmdir(char *dirname)
 int sfs_lsdir()
 {
 	/* TODO: go thru the linked list */
-	return 0;
+	int num_dir = 0;
+	char block_ptr[BLOCK_SIZE];
+	sfs_dirblock_t dir;
+
+	blkid dir_bid = sb.first_dir;
+	printf("lsdir - First block ID: %d\n", dir_bid);
+
+
+	while(dir_bid != 0){
+		sfs_read_block(block_ptr, dir_bid);
+
+		dir = *(sfs_dirblock_t*)block_ptr;
+		printf("lsdir: %s\n", dir.dir_name);
+		num_dir++;
+
+		dir_bid = dir.next_dir;
+	}
+
+	printf("lsdir - Num dirs: %d\n", num_dir);
+	return num_dir;
 }
 
 /*
