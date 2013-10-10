@@ -30,14 +30,13 @@ static fd_struct_t fdtable[SFS_MAX_OPENED_FILES];
  */
 static void sfs_flush_freemap()
 {
-	size_t i;
 	blkid bid = 1;
 	char *p = (char *)freemap;
 
-
-	/* TODO: write freemap block one by one */
-
-	
+	do{
+		sfs_write_block(p, bid);
+		bid++;
+	} while(bid < sb.nfreemap_blocks);
 }
 
 /* 
@@ -82,10 +81,6 @@ static blkid sfs_alloc_block()
 					
 					result = bitmap & mask;
 
-					printf("Bitmap: %#08x\n", bitmap);
-					printf("Result: %#08x\n", result);
-					printf("Mask  : %#08x\n", mask);
-
 					if(result == mask){
 						printf("Block %d occupied\n", count);
 						printf("\n");
@@ -100,11 +95,7 @@ static blkid sfs_alloc_block()
 						u32 newBitmap = bitmap | mask;
 						freemap[fm_byte] = newBitmap;
 
-						//Flush freemap to disk
-						sfs_write_block(freemap, freemap_id);
-						
-						/* TODO: FIGURE OUT FLUSH FREEMAP */
-						//sfs_flush_freemap();
+						sfs_flush_freemap();
 
 						return free_block_id;
 					}
@@ -112,8 +103,6 @@ static blkid sfs_alloc_block()
 			}
 		}
 	}
-	
-
 	return 0;
 }
 
@@ -197,7 +186,7 @@ static blkid sfs_find_dir(char *dirname)
 	
 	/* TODO: start from the sb.first_dir, traverse the linked list */
 	dir_bid = sb.first_dir;
-	printf("ID of first dir: %d\n", sb.first_dir);
+	printf("find_dir - first dir ID: %d\n", sb.first_dir);
 	char block_ptr[BLOCK_SIZE];
 
 	while(dir_bid != 0){
@@ -208,6 +197,7 @@ static blkid sfs_find_dir(char *dirname)
 		dir = *(sfs_dirblock_t*)block_ptr;
 
 		if(dirname == dir.dir_name){
+			printf("FOUND DIRECTORY %s BID: %d\n", dir.dir_name, dir_bid);
 			return dir_bid;
 		} else{
 			//Go to the next directory in the list
@@ -215,7 +205,7 @@ static blkid sfs_find_dir(char *dirname)
 		}
 	}
 
-	
+	printf("DIDN'T FIND DIRECTORY %s\n", dir.dir_name);
 	return 0;
 }
 
@@ -284,18 +274,15 @@ int sfs_mkdir(char *dirname)
 		return -1;
 	}
 
-	printf("Size of struct: %lx\n", sizeof(sfs_dirblock_t));
-
 	/* TODO: test if the dir exists */
-	if(sb.first_dir != 0){
-		if(sfs_find_dir(dirname) != 0){
-			return -1;
-		} 
+	if(sfs_find_dir(dirname) != 0){
+		return -1;
+		printf("The specified directory DOES exist\n");
 	} else{
 		printf("The specified directory does not exist\n");
 		
 		//Initialize variables
-		blkid next_dir;
+		blkid next_dir_id;
 		char block_ptr[BLOCK_SIZE];
 		sfs_dirblock_t dir;
 
@@ -304,28 +291,41 @@ int sfs_mkdir(char *dirname)
 		//sfs_find_dir, sfs_alloc_block, sfs_free_block
 		//sfs_flush_freemap
 	
-		/* TODO: insert a new dir to the linked list */
-
 		//1. Allocate space for a new block
 		blkid new_bid = sfs_alloc_block();
 
 		//2. Set the next_dir in the last directory block
-		next_dir = sb.first_dir;
-		sfs_read_block(block_ptr, next_dir);
+		next_dir_id = sb.first_dir;
+		sfs_read_block(block_ptr, next_dir_id);
 		dir = *(sfs_dirblock_t*)block_ptr;
 
-		if(next_dir == 0){
-			
+		if(next_dir_id == 0){
 			sb.first_dir = new_bid;
 		} else{
-			while(next_dir != 0){	
-				sfs_read_block(block_ptr, next_dir);
+			while(next_dir_id != 0){	
+				sfs_read_block(block_ptr, next_dir_id);
 				dir = *(sfs_dirblock_t*)block_ptr;
-				next_dir = dir.next_dir;
-				
-				if(next_dir == 0){
+
+				//Next dir is zero, set it to the next available block
+				if(dir.next_dir == 0){
+					blkid modified_dir_id = next_dir_id;
+
+					sfs_read_block(block_ptr, modified_dir_id);
+					dir = *(sfs_dirblock_t*)block_ptr;
+										
 					dir.next_dir = new_bid;
+
+					printf("Setting next directory block to: %d\n", dir.next_dir);
+
+					//A value was changed, so this must be flushed to disk
+					sfs_write_block(&dir, modified_dir_id);
+					next_dir_id = 0;
+
+				} else{
+					next_dir_id = dir.next_dir;	
 				}
+
+				
 			}
 		}
 		printf("Next directory block: %d\n", new_bid);
@@ -342,6 +342,8 @@ int sfs_mkdir(char *dirname)
 		sfs_read_block(block_ptr, new_bid);
 		dir = *(sfs_dirblock_t*)block_ptr; 
 		printf("New block name: %s\n", dir.dir_name);
+
+
 	}
 	
 	return 0;
@@ -354,24 +356,44 @@ int sfs_mkdir(char *dirname)
 int sfs_rmdir(char *dirname)
 {
 	/* TODO: check if the dir exists */
-	
-	if(sb.first_dir == 0){
-		//The superblock does not point to any directories
+	blkid dir_bid = sfs_find_dir(dirname);
+	printf("rmdir - Deleting %s, BID: %d\n", dirname, dir_bid);
+	u32 fm_block;
+	u32 bitmap;
+
+	u32 bid = 31;
+
+	printf("Test value: %#x\n", 1<<(dir_bid%32));
+
+	/* TODO: check if no files 
+		DO THIS
+		DO THIS
+		DO THIS
+		DO THIS
+	 	DO THIS */
+
+	if(sb.first_dir == 0 || dir_bid == 0){
+		//The directory does not exist
 		return -1;
 	} else{
+		//Unset the corresponding bit in the freemap
 		
-		blkid dir_bid = sfs_find_dir(dirname);
+		u32 newBitmap;
+		u32 mask; 
 
-		if(dir_bid == 0){
-			//The directory does not exist in sfs
-			return -1;
-		} else{
-			//Remove the specified bid from sfs
+		//Find the freemap block and index where the block is
+		fm_block = dir_bid / (BLOCK_SIZE * 8);
+		fm_block = fm_block + 1;	//Freemap blocks start at BID 1
 
-		}
+		sfs_read_block(freemap, fm_block);
+
+		bitmap = freemap[dir_bid % 32];
+
+		//newBitmap = bitmap
+
+		sfs_flush_freemap();
 	}
 
-	/* TODO: check if no files */
 	/* TODO: go thru the linked list and delete the dir*/
 	return 0;
 }
@@ -389,16 +411,16 @@ int sfs_lsdir()
 	blkid dir_bid = sb.first_dir;
 	printf("lsdir - First block ID: %d\n", dir_bid);
 
-
-	while(dir_bid != 0){
+	do{
 		sfs_read_block(block_ptr, dir_bid);
 
 		dir = *(sfs_dirblock_t*)block_ptr;
-		printf("lsdir: %s\n", dir.dir_name);
+		printf("lsdir- %s: BID: %d\n", dir.dir_name, dir_bid);
 		num_dir++;
 
 		dir_bid = dir.next_dir;
-	}
+		printf("lsdir - NEXT BLOCK ID: %d\n", dir_bid);
+	} while(dir_bid != 0);
 
 	printf("lsdir - Num dirs: %d\n", num_dir);
 	return num_dir;
