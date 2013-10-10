@@ -25,8 +25,6 @@ static u32 *freemap;
 /* file descriptor table */
 static fd_struct_t fdtable[SFS_MAX_OPENED_FILES];
 
-void print_mydir(blkid dir_id);
-
 /* 
  * Flush the in-memory freemap to disk 
  */
@@ -252,6 +250,10 @@ sfs_superblock_t *sfs_print_info()
 	printf("First dir: %d\n", sb.first_dir);
 	printf("Num freemap blocks: %d\n\n", sb.nfreemap_blocks);
 
+	printf("FREEBLOCK INFO\n");
+	sfs_read_block(freemap, 1);
+	printf("freemap[0] = %#x\n\n", freemap[0]);
+
 	return &sb;
 }
 
@@ -267,7 +269,7 @@ int sfs_mkdir(char *dirname)
 		return -1;
 	}
 
-	/* TODO: test if the dir exists */
+	//Test if the dir exists
 	if(sfs_find_dir(dirname) != 0){
 		return -1;
 	} else{	
@@ -313,8 +315,6 @@ int sfs_mkdir(char *dirname)
 				} else{
 					next_dir_id = dir.next_dir;	
 				}
-
-				
 			}
 		}
 
@@ -325,15 +325,7 @@ int sfs_mkdir(char *dirname)
 
 		//Write the temporary block into the disk
 		sfs_write_block(&temp_dir, new_bid);
-/*
-		//Read block back for testing purposes
-		sfs_read_block(block_ptr, new_bid);
-		dir = *(sfs_dirblock_t*)block_ptr; 
-		printf("New block name: %s\n", dir.dir_name);
-*/
-
 	}
-	
 	return 0;
 }
 
@@ -375,7 +367,12 @@ int sfs_rmdir(char *dirname)
 
 		sfs_read_block(freemap, fm_block);
 
-		bitmap = freemap[dir_bid % 32];
+		bitmap = freemap[dir_bid/32];
+		printf("DIR BID: %d\n", dir_bid);
+		printf("BITMAP VALUE: %#x\n", bitmap);
+		bitmap = bitmap & ~(1<<(dir_bid%32));
+
+		freemap[dir_bid/32] = bitmap;
 
 		sfs_flush_freemap();
 	}
@@ -397,19 +394,7 @@ int sfs_rmdir(char *dirname)
 
 		sfs_read_block(&sb, 0);
 		sb.first_dir = block_to_copy;
-		sfs_write_block(&sb, 0);
-/*
-		sfs_read_block(block_ptr, 0);
-		sfs_superblock_t temp_sb = *(sfs_superblock_t*)block_ptr;
-
-		temp_sb.first_dir = block_to_copy;
-
-		sfs_write_block(&temp_sb, 0);
-*/
-		//sfs_read_block(&sb, 0);
-
-		//sfs_read_block(*sb, 0);
-		
+		sfs_write_block(&sb, 0);		
 	}
 
 	//General case
@@ -491,9 +476,11 @@ int sfs_open(char *dirname, char *name)
 	int i;
 	printf("Size of inodes: %lx\n", SFS_DB_NINODES);
 
-	/* TODO: find a free fd number */
+	/* TODO: find a free fd (file descriptor) number */
 	
 	/* TODO: find the dir first */
+	dir_bid = sfs_find_dir(dirname);
+	printf("Opening a file in BID: %d\n", dir_bid);
 
 	/* TODO: traverse the inodes to see if the file exists.
 	   If it exists, load its inode. Otherwise, create a new file.
@@ -618,20 +605,3 @@ int sfs_eof(int fd)
 	/* TODO: check if the cursor has gone out of bound */
 	return 0;
 }
-
-//Helper method to print all of the values of directory blocks
-void print_mydir(blkid dir_id){
-	char block_ptr[BLOCK_SIZE];
-	sfs_dirblock_t dir;
-
-	sfs_read_block(block_ptr, dir_id);
-	dir = *(sfs_dirblock_t*)block_ptr;
-
-	printf("\n-------------------------------------\n");
-	printf("%s\n", dir.dir_name);
-	printf("BID: %d\n", dir_id);
-	printf("Next dir: %d\n", dir.next_dir);
-	printf("-------------------------------------\n\n");
-
-}
-
