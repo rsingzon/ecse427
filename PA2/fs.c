@@ -108,9 +108,35 @@ static blkid sfs_alloc_block()
 static void sfs_free_block(blkid bid)
 {
 	/* TODO find the entry and bit that correspond to the block */
-	int entry_loc;
-	int bit_loc;
+
 	/* TODO unset the bit and flush the freemap */
+	u32 fm_block;
+	u32 bitmap;
+	u32 newBitmap;
+	u32 mask; 
+
+	//Find the freemap block and index where the block is
+	fm_block = bid / (BLOCK_SIZE * 8);
+	fm_block = fm_block + 1;	//Freemap blocks start at BID 1
+
+	sfs_read_block(freemap, fm_block);
+
+	bitmap = freemap[bid/32];
+	printf("BID: %d\n", bid);
+	printf("BITMAP VALUE: %#x\n", bitmap);
+	bitmap = bitmap & ~(1<<(bid%32));
+
+	freemap[bid/32] = bitmap;
+
+	sfs_flush_freemap();
+
+	//Remove the content of the block
+/*	
+	char empty_blk[BLOCK_SIZE];
+	memset(empty_blk, 0, BLOCK_SIZE);
+
+	sfs_write_block(empty_blk, bid);
+*/
 }
 
 /* 
@@ -340,8 +366,7 @@ int sfs_rmdir(char *dirname)
 		return -1;
 	}
 
-	u32 fm_block;
-	u32 bitmap;
+	
 
 	/* TODO: check if no files 
 		DO THIS
@@ -355,6 +380,10 @@ int sfs_rmdir(char *dirname)
 		return -1;
 	} else{
 		//Unset the corresponding bit in the freemap
+
+/*****************************************************
+	TO DELETE
+
 		u32 newBitmap;
 		u32 mask; 
 
@@ -372,6 +401,8 @@ int sfs_rmdir(char *dirname)
 		freemap[dir_bid/32] = bitmap;
 
 		sfs_flush_freemap();
+******************************************************/
+		sfs_free_block(dir_bid);
 	}
 
 	/* TODO: go thru the linked list and delete the dir*/
@@ -494,13 +525,12 @@ int sfs_open(char *dirname, char *name)
 			fd_num++;	
 		}
 	}
-	printf("fd: %d\n", fd_num);
 
 	
 	/* TODO: find the dir first */
 	dir_bid = sfs_find_dir(dirname);
-
 	sfs_read_block(&dir, dir_bid);
+	fd.dir_bid = dir_bid;
 
 	/* TODO: traverse the inodes to see if the file exists.
 	   If it exists, load its inode. Otherwise, create a new file.
@@ -534,6 +564,7 @@ int sfs_open(char *dirname, char *name)
 		if(strcmp(file_name, name) == 0){
 	
 			fd.inode = inode;
+			fd.inode_bid = count;
 			fd_set = 1;
 
 			break;
@@ -560,6 +591,7 @@ int sfs_open(char *dirname, char *name)
 		inode.first_frame = sfs_alloc_block();
 
 		fd.inode = inode;
+		fd.inode_bid = new_inode_bid;
 
 		sfs_write_block(&inode, new_inode_bid);
 
@@ -569,7 +601,8 @@ int sfs_open(char *dirname, char *name)
 		printf("FILE NAME: %s\n", inode.file_name);
 	}
 
-	
+	printf("fd: %d\nInode bid: %d\nDir bid: %d\n", fd_num, fd.inode_bid, fd.dir_bid);
+
 	return fd_num;
 }
 
@@ -591,15 +624,55 @@ int sfs_remove(int fd_num)
 {
 	blkid frame_bid;
 	sfs_dirblock_t dir;
+	char block_ptr[BLOCK_SIZE];
 	int i;
 
 	fd_struct_t fd = fdtable[fd_num];
 
 	/* TODO: update dir */
+	//Set the index of the inode to zero
+	blkid dir_bid = fd.dir_bid;
+	blkid inode_bid = fd.inode_bid;
+
+	sfs_read_block(block_ptr, dir_bid);
+	dir = *(sfs_dirblock_t*)block_ptr;
+
+	dir.inodes[inode_bid] = 0;
+	sfs_write_block(&dir, dir_bid);
 
 	/* TODO: free inode and all its frames */
+	sfs_inode_t inode;
+	sfs_read_block(block_ptr, inode_bid);
+	inode = *(sfs_inode_t*)block_ptr;
+
+	char frame_ptr[BLOCK_SIZE];
+	sfs_inode_frame_t frame;
+	blkid next_frame = inode.first_frame;
+
+	//Iterate through each of the nonzero content blocks
+	//sfs_free_block() on all of them
+
+	while(next_frame != 0){
+		int current_frame = next_frame;
+
+		sfs_read_block(frame_ptr, next_frame);
+		frame = *(sfs_inode_frame_t*)frame_ptr;
+
+		next_frame = frame.next;
+		frame.next = 0;
+
+		
+	}
 
 	/* TODO: close the file */
+
+	//Reset the file description to default
+	
+	fd.valid = 0;
+	memset(&fd.inode, 0, sizeof(sfs_inode_t));
+	fd.dir_bid = 0;
+	fd.inode_bid = 0;
+
 	return 0;
 }
 
