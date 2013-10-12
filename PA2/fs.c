@@ -18,9 +18,9 @@
 /* constant of how many bits in one freemap entry */
 #define SFS_NBITS_IN_FREEMAP_ENTRY (sizeof(u32)*8)
 
-/* in-memory superblock (in consistent with the disk copy) */
+/* in-memory superblock (inconsistent with the disk copy) */
 static sfs_superblock_t sb;
-/* freemap, u32 array (in consistent with the disk copy) */
+/* freemap, u32 array (inconsistent with the disk copy) */
 static u32 *freemap;
 /* file descriptor table */
 static fd_struct_t fdtable[SFS_MAX_OPENED_FILES];
@@ -59,9 +59,6 @@ static blkid sfs_alloc_block()
 
 		sfs_read_block(freemap, freemap_id);
 		
-		/* TODO: find out which bit in the entry is zero,
-		   set the bit, flush and return the bid
-		*/
 		//Search each index of the freemap block
 		for(fm_byte = 0; fm_byte < BLOCK_SIZE; fm_byte++){
 
@@ -93,6 +90,12 @@ static blkid sfs_alloc_block()
 
 						sfs_flush_freemap();
 
+						//Clear the data stored in the block
+						char empty_blk[BLOCK_SIZE];
+						memset(empty_blk, 0, BLOCK_SIZE);
+
+						sfs_write_block(empty_blk, free_block_id);
+
 						return free_block_id;
 					}
 				}
@@ -107,6 +110,7 @@ static blkid sfs_alloc_block()
  */
 static void sfs_free_block(blkid bid)
 {
+	printf("\nFREEING BLOCK %d\n", bid);
 	/* TODO find the entry and bit that correspond to the block */
 
 	/* TODO unset the bit and flush the freemap */
@@ -122,9 +126,12 @@ static void sfs_free_block(blkid bid)
 	sfs_read_block(freemap, fm_block);
 
 	bitmap = freemap[bid/32];
+	printf("Freemap byte: %d\n", bid/32);
+
 	printf("BID: %d\n", bid);
-	printf("BITMAP VALUE: %#x\n", bitmap);
+	printf("BITMAP VALUE BEFORE: %#x\n", bitmap);
 	bitmap = bitmap & ~(1<<(bid%32));
+	printf("BITMAP VALUE AFTER : %#x\n", bitmap);
 
 	freemap[bid/32] = bitmap;
 
@@ -505,7 +512,7 @@ int sfs_open(char *dirname, char *name)
 	fd_struct_t *fd_ptr;
 	fd_struct_t fd;
 
-	/* TODO: find a free fd (file descriptor) number */
+	//Finds a free file descriptor number
 	int fd_num = 0;	
 
 	while(fd_num < SFS_MAX_OPENED_FILES){
@@ -514,7 +521,7 @@ int sfs_open(char *dirname, char *name)
 		if(fd.valid == 0){
 			fd.valid = 1;
 			fd.cur = 1;
-			fdtable[fd_num] = fd;
+			
 			break;
 
 		} else if(fd_num == SFS_MAX_OPENED_FILES - 1){ 
@@ -527,7 +534,7 @@ int sfs_open(char *dirname, char *name)
 	}
 
 	
-	/* TODO: find the dir first */
+	//Find the directory in which the specified file is contained
 	dir_bid = sfs_find_dir(dirname);
 	sfs_read_block(&dir, dir_bid);
 	fd.dir_bid = dir_bid;
@@ -542,7 +549,6 @@ int sfs_open(char *dirname, char *name)
 	int free_inode = -1;
 	char *file_name;
 	
-
 	while(count < SFS_DB_NINODES){
 	
 		inode_bid = dir.inodes[count];
@@ -601,7 +607,9 @@ int sfs_open(char *dirname, char *name)
 		printf("FILE NAME: %s\n", inode.file_name);
 	}
 
-	printf("fd: %d\nInode bid: %d\nDir bid: %d\n", fd_num, fd.inode_bid, fd.dir_bid);
+	//Set the file descriptor in the file descriptor table	
+	fdtable[fd_num] = fd;
+	printf("\nfd: %d\nInode bid: %d\nDir bid: %d\n", fd_num, fd.inode_bid, fd.dir_bid);
 
 	return fd_num;
 }
@@ -629,13 +637,29 @@ int sfs_remove(int fd_num)
 
 	fd_struct_t fd = fdtable[fd_num];
 
+	printf("fd num: %d\n", fd_num);
+
 	/* TODO: update dir */
 	//Set the index of the inode to zero
 	blkid dir_bid = fd.dir_bid;
 	blkid inode_bid = fd.inode_bid;
 
+	printf("File in directory: %d\n", dir_bid);
+	printf("Inode to remove: %d\n", inode_bid);
+
+	//Remove the inode from the directory
 	sfs_read_block(block_ptr, dir_bid);
 	dir = *(sfs_dirblock_t*)block_ptr;
+
+	//Find the index at which the inode is stored
+	int count = 0;
+	while(count < SFS_DB_NINODES){
+		if(dir.inodes[count] == inode_bid){
+			dir.inodes[count] = 0;
+			break;
+		}
+		count++;
+	}
 
 	dir.inodes[inode_bid] = 0;
 	sfs_write_block(&dir, dir_bid);
@@ -651,17 +675,28 @@ int sfs_remove(int fd_num)
 
 	//Iterate through each of the nonzero content blocks
 	//sfs_free_block() on all of them
-
 	while(next_frame != 0){
+		printf("Frame number: %d\n", next_frame);
+
 		int current_frame = next_frame;
 
 		sfs_read_block(frame_ptr, next_frame);
 		frame = *(sfs_inode_frame_t*)frame_ptr;
 
+		//Check each of the entries of the frame and free nonzero blocks
+		int i;
+		for(i = 0; i < SFS_FRAME_COUNT; i++){
+			blkid content_blk = frame.content[i];
+			printf("%d: %d\n", i, content_blk);
+			if(content_blk != 0){
+				sfs_free_block(content_blk);
+			}
+		}
+
 		next_frame = frame.next;
 		frame.next = 0;
 
-		
+		sfs_write_block(&frame, current_frame);
 	}
 
 	/* TODO: close the file */
