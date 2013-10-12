@@ -277,16 +277,11 @@ int sfs_mkdir(char *dirname)
 		blkid next_dir_id;
 		char block_ptr[BLOCK_SIZE];
 		sfs_dirblock_t dir;
-
-		//Insert a new directory into the linkedList
-		//Helper functions: 
-		//sfs_find_dir, sfs_alloc_block, sfs_free_block
-		//sfs_flush_freemap
 	
-		//1. Allocate space for a new block
+		//Allocate space for a new block
 		blkid new_bid = sfs_alloc_block();
 
-		//2. Set the next_dir in the last directory block
+		//Set the next_dir in the last directory block
 		next_dir_id = sb.first_dir;
 		sfs_read_block(block_ptr, next_dir_id);
 		dir = *(sfs_dirblock_t*)block_ptr;
@@ -319,9 +314,11 @@ int sfs_mkdir(char *dirname)
 		}
 
 		//Create a temporary directory and initialize its members
+		//Set the next dir, name, and set all its inodes to zero
 		sfs_dirblock_t temp_dir;
 		temp_dir.next_dir = 0;
 		strcpy(temp_dir.dir_name, dirname);
+		memset(&temp_dir.inodes[0], 0, SFS_DB_NINODES * sizeof(blkid));
 
 		//Write the temporary block into the disk
 		sfs_write_block(&temp_dir, new_bid);
@@ -470,24 +467,110 @@ int sfs_lsdir()
 int sfs_open(char *dirname, char *name)
 {
 	blkid dir_bid = 0, inode_bid = 0;
-	sfs_inode_t *inode;
+	char inode_ptr[BLOCK_SIZE];
+	sfs_inode_t inode;
 	sfs_dirblock_t dir;
-	int fd;
-	int i;
-	printf("Size of inodes: %lx\n", SFS_DB_NINODES);
+
+	fd_struct_t *fd_ptr;
+	fd_struct_t fd;
 
 	/* TODO: find a free fd (file descriptor) number */
+	int fd_num = 0;	
+
+	while(fd_num < SFS_MAX_OPENED_FILES){
+		fd = fdtable[fd_num];
+
+		if(fd.valid == 0){
+			fd.valid = 1;
+			fd.cur = 1;
+			fdtable[fd_num] = fd;
+			break;
+
+		} else if(fd_num == SFS_MAX_OPENED_FILES - 1){ 
+			printf("The maximum number of files are already in use\n");
+			return -1;
+
+		} else{
+			fd_num++;	
+		}
+	}
+	printf("fd: %d\n", fd_num);
+
 	
 	/* TODO: find the dir first */
 	dir_bid = sfs_find_dir(dirname);
-	printf("Opening a file in BID: %d\n", dir_bid);
+
+	sfs_read_block(&dir, dir_bid);
 
 	/* TODO: traverse the inodes to see if the file exists.
 	   If it exists, load its inode. Otherwise, create a new file.
 	*/
 
+	//Iterate through all the indices of the inodes to find the file
+	int count = 0;
+	int fd_set = 0;
+	int free_inode = -1;
+	char *file_name;
+	
+
+	while(count < SFS_DB_NINODES){
+	
+		inode_bid = dir.inodes[count];
+
+		if(inode_bid == 0){
+			if(free_inode == -1){
+				free_inode = count;
+			}
+			count++;
+			continue;
+		}
+
+		//Read the inode at the specified index
+		sfs_read_block(inode_ptr, inode_bid);
+		inode = *(sfs_inode_t*)inode_ptr;
+
+		file_name = inode.file_name;
+
+		if(strcmp(file_name, name) == 0){
+	
+			fd.inode = inode;
+			fd_set = 1;
+
+			break;
+		}
+		count++;
+	}
+
 	/* TODO: create a new file */
-	return fd;
+	//Allocate a block for the inode
+	//Put the inode bid into the directory inode array
+	//Allocate a block for the first frame
+	//Point the inode to the frame
+	//Set a name for the inode
+	//Place the inode in the file descriptor array
+
+	if(fd_set == 0){
+		blkid new_inode_bid = sfs_alloc_block();
+
+		dir.inodes[free_inode] = new_inode_bid;
+		sfs_write_block(&dir, dir_bid);
+
+		strcpy(inode.file_name, name);
+		
+		inode.first_frame = sfs_alloc_block();
+
+		fd.inode = inode;
+
+		sfs_write_block(&inode, new_inode_bid);
+
+		sfs_read_block(&inode, new_inode_bid);
+
+		printf("FIRST FRAME: %d\n", inode.first_frame);
+		printf("FILE NAME: %s\n", inode.file_name);
+	}
+
+	
+	return fd_num;
 }
 
 /*
@@ -504,11 +587,13 @@ int sfs_close(int fd)
  *
  * This function returns zero on success.
  */
-int sfs_remove(int fd)
+int sfs_remove(int fd_num)
 {
 	blkid frame_bid;
 	sfs_dirblock_t dir;
 	int i;
+
+	fd_struct_t fd = fdtable[fd_num];
 
 	/* TODO: update dir */
 
@@ -524,7 +609,39 @@ int sfs_remove(int fd)
 int sfs_ls()
 {
 	/* TODO: nested loop: traverse all dirs and all containing files*/
-	return 0;
+	sfs_read_block(&sb, 0);
+	blkid next_dir = sb.first_dir;
+
+	char block_ptr[BLOCK_SIZE];
+	sfs_dirblock_t dir;
+	int num_files = 0;
+
+	//Traverse all directories
+	while(next_dir != 0){
+
+		sfs_read_block(block_ptr, next_dir);
+		dir = *(sfs_dirblock_t*)block_ptr;
+
+		next_dir = dir.next_dir;
+
+		//Traverse all files within the directory
+		sfs_inode_t inode;
+		int count = 0;
+		printf("\n%s:\n", dir.dir_name);
+		while(count < SFS_DB_NINODES){
+			
+			if(dir.inodes[count] != 0){
+				sfs_read_block(block_ptr, dir.inodes[count]);
+				inode = *(sfs_inode_t*)block_ptr;
+
+				printf("%s\n", inode.file_name);
+				num_files++;
+			}
+			count++;
+		}
+	}
+	printf("\n");
+	return num_files;
 }
 
 /*
