@@ -184,17 +184,55 @@ static void sfs_resize_file(int fd, u32 new_size)
  */
 static u32 sfs_get_file_content(blkid *bids, int fd, u32 cur, u32 length)
 {
-	/* the starting block of the content */
-	u32 start;
-	/* the ending block of the content */
-	u32 end;
-	u32 i;
+	printf("ENTERING get file content\n");
+	u32 start;		//Starting block of content
+	u32 end;		//Ending block of content
+	sfs_inode_t inode;
 	sfs_inode_frame_t frame;
+	blkid frame_bid;
+	char tmp[BLOCK_SIZE];
+	char frame_ptr[BLOCK_SIZE];
+	u32 num_bids = 0;			//Counts the number of bids in the array
 
 	/* TODO: find blocks between start and end.
-	   Transverse the frame list if needed
+	   Traverse the frame list if needed
 	*/
-	return 0;
+	start = cur / BLOCK_SIZE;
+	end = (cur + length) / BLOCK_SIZE;
+
+	u32 numBlocks = end - start + 1;
+	u32 blocks_remaining = numBlocks;
+
+	//Start searching at an offset determined by the start position
+	u32 block_count = start % SFS_FRAME_COUNT;	
+	
+	//This loop will iterate through the frames
+	while(blocks_remaining > 0){
+
+		sfs_read_block(frame_ptr, frame_bid);
+		frame = *(sfs_inode_frame_t*)frame_ptr;
+
+		//Iterate through the content array of the frame
+		while(block_count < SFS_FRAME_COUNT && blocks_remaining > 0){
+			int i;
+			for(i = 0; i < SFS_FRAME_COUNT; i++){
+				printf("BID @ %d: %d\n", i, frame.content[i]);
+			}
+
+			printf("BID: %d\n", frame.content[block_count]);
+			bids[num_bids] = frame.content[block_count];
+			num_bids++;
+			block_count++;
+			blocks_remaining--;
+		}
+
+		if(blocks_remaining != 0){
+			frame_bid = frame.next;
+		}
+	
+	}
+
+	return num_bids;
 }
 
 /*
@@ -520,7 +558,7 @@ int sfs_open(char *dirname, char *name)
 
 		if(fd.valid == 0){
 			fd.valid = 1;
-			fd.cur = 1;
+			fd.cur = 0;
 			
 			break;
 
@@ -687,7 +725,7 @@ int sfs_remove(int fd_num)
 		int i;
 		for(i = 0; i < SFS_FRAME_COUNT; i++){
 			blkid content_blk = frame.content[i];
-			printf("%d: %d\n", i, content_blk);
+	
 			if(content_blk != 0){
 				sfs_free_block(content_blk);
 			}
@@ -763,15 +801,57 @@ int sfs_ls()
 int sfs_write(int fd, void *buf, int length)
 {
 	int remaining, offset, to_copy;
-	blkid *bids;
-	int i, n;
+	int frame_start, frame_end, content_num;
 	char *p = (char *)buf;
 	char tmp[BLOCK_SIZE];
+	char inode_ptr[BLOCK_SIZE];
 	u32 cur = fdtable[fd].cur;
+
+	sfs_inode_t inode;
+	remaining = length;
+
+	int numBids = (length / BLOCK_SIZE) + 1; 
+	blkid bids[numBids];
+
+	sfs_read_block(inode_ptr, fdtable[fd].inode_bid);
+	inode = *(sfs_inode_t*)inode_ptr;
+
+	blkid frame_bid = inode.first_frame;
 
 	/* TODO: check if we need to resize */
 	
+	//Find frame holding the cursor, and the end frame
+	frame_start = cur / (SFS_FRAME_COUNT * BLOCK_SIZE);
+	frame_end = (cur + length) / (SFS_FRAME_COUNT * BLOCK_SIZE);
+	content_num = cur / BLOCK_SIZE;
+	offset = cur % BLOCK_SIZE;
+
+	//Traverse the frames and check if frame_num exists
+	sfs_inode_frame_t frame;
+	int count = 0;
+
+	while(count < frame_end){
+
+		sfs_read_block(tmp, frame_bid);
+		frame = *(sfs_inode_frame_t*)tmp;
+
+		//If the next frame points to nothing, create another frame
+		if(frame.next == 0){
+			printf("sfs_write: Extending file!\n");
+			blkid new_bid = sfs_alloc_block();
+			frame.next = new_bid;
+			sfs_write_block(&frame, frame_bid);
+			frame_bid = new_bid;
+		} else{
+			printf("sfs_write: Checking next frame\n");
+			frame_bid = frame.next;
+		}
+
+		count++;
+	}
+
 	/* TODO: get the block ids of all contents (using sfs_get_file_content() */
+	sfs_get_file_content(bids, fd, cur, length);
 
 	/* TODO: main loop, go through every block, copy the necessary parts
 	   to the buffer, consult the hint in the document. Do not forget to 
@@ -780,11 +860,12 @@ int sfs_write(int fd, void *buf, int length)
 	/* TODO: update the cursor and free the temp buffer
 	   for sfs_get_file_content()
 	*/
+
 	return 0;
 }
 
 /*
- * Read from an opend file. 
+ * Read from an opened file. 
  * Read can not enlarge file. So you should not read outside the size of 
  * the file. If the read exceeds the file size, its result will be truncated.
  *
