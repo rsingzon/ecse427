@@ -184,7 +184,6 @@ static void sfs_resize_file(int fd, u32 new_size)
  */
 static u32 sfs_get_file_content(blkid *bids, int fd, u32 cur, u32 length)
 {
-	printf("ENTERING get file content\n");
 	u32 start;		//Starting block of content
 	u32 end;		//Ending block of content
 	sfs_inode_t inode;
@@ -197,6 +196,14 @@ static u32 sfs_get_file_content(blkid *bids, int fd, u32 cur, u32 length)
 	/* TODO: find blocks between start and end.
 	   Traverse the frame list if needed
 	*/
+
+	//Get the bid of the desired frame
+	fd_struct_t fd_struct = fdtable[fd];
+	sfs_read_block(tmp, fd_struct.inode_bid);
+	inode = *(sfs_inode_t*)tmp;
+
+	frame_bid = inode.first_frame;
+
 	start = cur / BLOCK_SIZE;
 	end = (cur + length) / BLOCK_SIZE;
 
@@ -205,7 +212,7 @@ static u32 sfs_get_file_content(blkid *bids, int fd, u32 cur, u32 length)
 
 	//Start searching at an offset determined by the start position
 	u32 block_count = start % SFS_FRAME_COUNT;	
-	
+
 	//This loop will iterate through the frames
 	while(blocks_remaining > 0){
 
@@ -214,11 +221,6 @@ static u32 sfs_get_file_content(blkid *bids, int fd, u32 cur, u32 length)
 
 		//Iterate through the content array of the frame
 		while(block_count < SFS_FRAME_COUNT && blocks_remaining > 0){
-			int i;
-			for(i = 0; i < SFS_FRAME_COUNT; i++){
-				printf("BID @ %d: %d\n", i, frame.content[i]);
-			}
-
 			printf("BID: %d\n", frame.content[block_count]);
 			bids[num_bids] = frame.content[block_count];
 			num_bids++;
@@ -425,28 +427,6 @@ int sfs_rmdir(char *dirname)
 		return -1;
 	} else{
 		//Unset the corresponding bit in the freemap
-
-/*****************************************************
-	TO DELETE
-
-		u32 newBitmap;
-		u32 mask; 
-
-		//Find the freemap block and index where the block is
-		fm_block = dir_bid / (BLOCK_SIZE * 8);
-		fm_block = fm_block + 1;	//Freemap blocks start at BID 1
-
-		sfs_read_block(freemap, fm_block);
-
-		bitmap = freemap[dir_bid/32];
-		printf("DIR BID: %d\n", dir_bid);
-		printf("BITMAP VALUE: %#x\n", bitmap);
-		bitmap = bitmap & ~(1<<(dir_bid%32));
-
-		freemap[dir_bid/32] = bitmap;
-
-		sfs_flush_freemap();
-******************************************************/
 		sfs_free_block(dir_bid);
 	}
 
@@ -861,6 +841,7 @@ int sfs_write(int fd, void *buf, int length)
 	   for sfs_get_file_content()
 	*/
 
+	//RETURN BYTES WRITTEN
 	return 0;
 }
 
