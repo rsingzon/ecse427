@@ -1,3 +1,19 @@
+TASKS TO DO:
+
+-Implement inode file size
+-Implement seek from EOF
+-Resize
+
+
+
+
+
+
+
+
+
+
+
 Specification Notes:
 
 Primary Goal: Implement a Simple File System (SFS)
@@ -14,4 +30,9 @@ int sfs_mkfs()
 	-> 
 
 sfs_superblock_t *sfs_print_info()
+
+
+-Each directory block has capacity for N inodes
+-Each inode contains several content blocks, together describing 1 file
+
 
