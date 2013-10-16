@@ -823,7 +823,6 @@ int sfs_write(int fd, void *buf, int length)
 	int count = 0;
 
 	while(count < frame_end){
-
 		sfs_read_block(tmp, frame_bid);
 		frame = *(sfs_inode_frame_t*)tmp;
 
@@ -855,6 +854,7 @@ int sfs_write(int fd, void *buf, int length)
 	int bid_count = 0;
 	//The block numbers should already be known by this part
 	while(remaining > 0){
+
 		to_copy = 0;
 		printf("\n\nBytes remaining: %d\n", remaining);
 		printf("Offset: %d\n", offset);
@@ -867,6 +867,7 @@ int sfs_write(int fd, void *buf, int length)
 			//Partially fill block
 			if(remaining < (BLOCK_SIZE - offset)){
 				to_copy = remaining;
+				printf("CURSOR OFFSET: %d\n", fdtable[fd].cur);
 				printf("SMALL COPY\n");
 			} else{
 				//Fill entire block
@@ -955,13 +956,16 @@ int sfs_read(int fd, void *buf, int length)
 
 	content_blk = cur / BLOCK_SIZE;
 	offset = cur % BLOCK_SIZE;
-printf("offset: %d\n", offset);
+
+	printf("offset: %d\n", offset);
 	/* TODO: check if we need to truncate */
 
 	//Traverse the frames and check if the length exceeds the 
 	//number of frames
 	blkid frame_bid = inode.first_frame;
 	sfs_inode_frame_t frame;
+
+	printf("\n~~~~~~~~~~~~~\nFile size: %d\n\n", inode.size);
 
 	int count = 0;
 	int nonzero_block = 0;
@@ -970,7 +974,7 @@ printf("offset: %d\n", offset);
 	printf("Content block:%d\n", content_blk);
 	//Check frames to determine if all content blocks exist
 	while(count < num_blocks){
-		printf("\nEntering loop\n");
+		printf("READING FRAME\n");
 		//Read the next frame
 		sfs_read_block(tmp, frame_bid);
 		frame = *(sfs_inode_frame_t*)tmp;
@@ -978,7 +982,6 @@ printf("offset: %d\n", offset);
 		
 		//Count the number of nonzero indices in the content array
 		while(content_blk < SFS_FRAME_COUNT && count < num_blocks){
-			printf("Looping\n");
 			if(frame.content[content_blk] != 0){
 				nonzero_block++;
 				count++;
@@ -1053,6 +1056,7 @@ printf("offset: %d\n", offset);
 
 		remaining = remaining - to_copy;
 		cur = cur + to_copy;
+		fdtable[fd].cur = cur;
 		
 		bid_count++;
 	}
@@ -1079,9 +1083,19 @@ int sfs_seek(int fd, int relative, int loc)
 	} else if(loc == SFS_SEEK_CUR){
 		fdtable[fd].cur = fdtable[fd].cur + relative;
 	} else if(loc == SFS_SEEK_END){
-		
+		char tmp[BLOCK_SIZE];
+		sfs_inode_t inode;
+		sfs_read_block(tmp, fdtable[fd].inode_bid);
+		inode = *(sfs_inode_t*)tmp;
+		int new_cur = inode.size + relative;
+
+		if(new_cur < 0){
+			fdtable[fd].cur = 0;
+		} else{
+			fdtable[fd].cur = new_cur;	
+		}
 	}
-	
+	printf("NEW CURSOR POSITION: %d\n", fdtable[fd].cur);
 	return 0;
 }
 
@@ -1096,6 +1110,8 @@ int sfs_eof(int fd)
 	sfs_read_block(inode_ptr, fdtable[fd].inode_bid);
 	sfs_inode_t inode = *(sfs_inode_t*)inode_ptr;
 
+	printf("Cursor position: %d\n", fdtable[fd].cur);
+	printf("File size: %d\n", inode.size);
 
 	if(fdtable[fd].cur > inode.size){
 		return 1;
