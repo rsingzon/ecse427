@@ -136,14 +136,6 @@ static void sfs_free_block(blkid bid)
 	freemap[bid/32] = bitmap;
 
 	sfs_flush_freemap();
-
-	//Remove the content of the block
-/*	
-	char empty_blk[BLOCK_SIZE];
-	memset(empty_blk, 0, BLOCK_SIZE);
-
-	sfs_write_block(empty_blk, bid);
-*/
 }
 
 /* 
@@ -612,6 +604,7 @@ int sfs_open(char *dirname, char *name)
 		//Allocate a block for the first frame	
 		blkid new_frame_bid = sfs_alloc_block();
 		inode.first_frame = new_frame_bid;
+		inode.size = 0;
 
 		//Place the inode in the file descriptor array
 		fd.inode = inode;
@@ -899,22 +892,20 @@ int sfs_write(int fd, void *buf, int length)
 		bid_count++;
 	}
 
+	//Update size of file in inode
+	printf("Cursor position: %d\n", cur);	
+	if(cur > inode.size){
+		inode.size = cur;
+	}
+
+	//inode.size = length - remaining;
+
+	sfs_write_block(&inode, fdtable[fd].inode_bid);
+
 	/* TODO: update the cursor and free the temp buffer
 	   for sfs_get_file_content()
 	*/
 	fdtable[fd].cur = cur;
-
-	/*
-	*
-	*
-	* Free temp buffer for sfs_get_file_content()?
-	  What does this mean?
-	*
-	*/
-
-	//Update size of file in inode
-	inode.size = length - remaining;
-	sfs_write_block(&inode, fdtable[fd].inode_bid);
 
 	//RETURN BYTES WRITTEN
 	return length - remaining;
@@ -1076,24 +1067,26 @@ int sfs_read(int fd, void *buf, int length)
  */
 int sfs_seek(int fd, int relative, int loc)
 {
-	/* TODO: get the old cursor, change it as specified by the parameters */
+	int new_cur;
 
 	if(loc == SFS_SEEK_SET){
-		fdtable[fd].cur = relative;
+		new_cur = relative;
 	} else if(loc == SFS_SEEK_CUR){
-		fdtable[fd].cur = fdtable[fd].cur + relative;
+		new_cur = fdtable[fd].cur + relative;
 	} else if(loc == SFS_SEEK_END){
 		char tmp[BLOCK_SIZE];
 		sfs_inode_t inode;
 		sfs_read_block(tmp, fdtable[fd].inode_bid);
 		inode = *(sfs_inode_t*)tmp;
-		int new_cur = inode.size + relative;
+		new_cur = inode.size + relative;
+		printf("inode size: %d\n", inode.size);
+		printf("Seek end cur %d\n", new_cur);
+	}
 
-		if(new_cur < 0){
-			fdtable[fd].cur = 0;
-		} else{
-			fdtable[fd].cur = new_cur;	
-		}
+	if(new_cur < 0){
+		fdtable[fd].cur = 0;
+	} else{
+		fdtable[fd].cur = new_cur;	
 	}
 	printf("NEW CURSOR POSITION: %d\n", fdtable[fd].cur);
 	return 0;
