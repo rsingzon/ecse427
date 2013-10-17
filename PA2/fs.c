@@ -804,6 +804,7 @@ int sfs_write(int fd, void *buf, int length)
 	blkid frame_bid = inode.first_frame;
 
 	/* TODO: check if we need to resize */
+
 	
 	//Find frame holding the cursor, and the end frame
 	frame_start = cur / (SFS_FRAME_COUNT * BLOCK_SIZE);
@@ -815,9 +816,14 @@ int sfs_write(int fd, void *buf, int length)
 	sfs_inode_frame_t frame;
 	int count = 0;
 
+	sfs_read_block(tmp, frame_bid);
+	frame = *(sfs_inode_frame_t*)tmp;
+
+	/*****************************************
+	 TO RELOCATE
+	
 	while(count < frame_end){
-		sfs_read_block(tmp, frame_bid);
-		frame = *(sfs_inode_frame_t*)tmp;
+		
 
 		//If the next frame points to nothing, create another frame
 		if(frame.next == 0){
@@ -830,9 +836,10 @@ int sfs_write(int fd, void *buf, int length)
 			printf("sfs_write: Checking next frame\n");
 			frame_bid = frame.next;
 		}
-
 		count++;
 	}
+
+	*******************************************************/
 
 	/* TODO: get the block ids of all contents (using sfs_get_file_content() */
 	int num_blocks = sfs_get_file_content(bids, fd, cur, length);
@@ -1110,6 +1117,5 @@ int sfs_eof(int fd)
 		return 1;
 	}
 
-	/* TODO: check if the cursor has gone out of bound */
 	return 0;
 }
