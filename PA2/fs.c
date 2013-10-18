@@ -194,7 +194,6 @@ static void sfs_resize_file(int fd, u32 new_size)
 
 	sfs_read_block(tmp, fdtable[fd].inode_bid);
 	inode = *(sfs_inode_t*)tmp;
-	printf("DEBUGGING NEW SIZE: %d\n", inode.size);
 	
 	/* TODO: allocate a full frame */
 
@@ -238,30 +237,35 @@ static u32 sfs_get_file_content(blkid *bids, int fd, u32 cur, u32 length)
 
 	//Start searching at an offset determined by the start position
 	u32 block_count = start % SFS_FRAME_COUNT;	
-
+int tempcount = 0;
 	//This loop will iterate through the frames
 	while(blocks_remaining > 0){
 
 		sfs_read_block(frame_ptr, frame_bid);
 		frame = *(sfs_inode_frame_t*)frame_ptr;
-		printf("get_file_content\n");
-		printf("Current frame bid: %d \nNext frame: %d\n", frame_bid, frame.next);
-
-		//printf("Current frame bid: %d\n", frame_bid);
-		//printf("Next frame bid: %d\n", frame.next);
+		//printf("get_file_content\n");
+		//printf("Current frame bid: %d \nNext frame: %d\n", frame_bid, frame.next);
 
 		//Iterate through the content array of the frame
 		while(block_count < SFS_FRAME_COUNT && blocks_remaining > 0){
-			//printf("\nBID: %d\n", frame.content[block_count]);
+			printf("Iterating through content arrays\n");
+			printf("\nBID: %d\n", frame.content[block_count]);
 			bids[num_bids] = frame.content[block_count];
 			num_bids++;
 			block_count++;
 			blocks_remaining--;
 		}
+		printf("Writing to frame bid: %d\n", frame_bid);
+		sfs_write_block(&frame, frame_bid);
 
 		if(blocks_remaining != 0){
 			frame_bid = frame.next;
 		}
+		tempcount++;
+		if(tempcount == 3){
+			break;
+		}
+		
 	}
 	printf("FINISHED GETTING USED BLOCKS\n");
 	return num_bids;
@@ -600,7 +604,6 @@ int sfs_open(char *dirname, char *name)
 		file_name = inode.file_name;
 
 		if(strcmp(file_name, name) == 0){
-			printf("FILE FOUND AT INODE BID %d\n", inode_bid);
 			fd.inode = inode;
 			fd.inode_bid = inode_bid;
 			fd_set = 1;
@@ -947,13 +950,11 @@ int sfs_read(int fd, void *buf, int length)
 	blkid frame_bid = inode.first_frame;
 	sfs_inode_frame_t frame;
 
-	printf("\n~~~~~~~~~~~~~\nFile size: %d\n\n", inode.size);
-
 	int count = 0;
 	int nonzero_block = 0;
 	//Truncate file to the smallest BLOCK
 	//The first and last blocks will have fewer bytes stored
-	printf("Content block:%d\n", content_blk);
+	
 	//Check frames to determine if all content blocks exist
 	while(count < num_blocks){
 		printf("READING FRAME: %d\n", frame_bid);
@@ -967,8 +968,9 @@ int sfs_read(int fd, void *buf, int length)
 			if(frame.content[content_blk] != 0){
 				nonzero_block++;
 				count++;
-				content_blk++;
 				printf("content[%d]: %d\n", content_blk, frame.content[content_blk]);
+				content_blk++;
+				
 			}
 		}
 
@@ -1002,8 +1004,6 @@ int sfs_read(int fd, void *buf, int length)
 	
 	while(remaining > 0){
 		to_copy = 0;
-		printf("\n\nBytes remaining: %d\n", remaining);
-		printf("Offset: %d\n", offset);
 
 		sfs_read_block(block_ptr, bids[bid_count]);
 
@@ -1090,10 +1090,6 @@ int sfs_eof(int fd)
 	char inode_ptr[BLOCK_SIZE];
 	sfs_read_block(inode_ptr, fdtable[fd].inode_bid);
 	sfs_inode_t inode = *(sfs_inode_t*)inode_ptr;
-
-	printf("\n\nsfs_eof: \nINODE BID: %d\n", fdtable[fd].inode_bid);
-	printf("Cursor position: %d\n", fdtable[fd].cur);
-	printf("File size: %d\n", inode.size);
 
 	if(fdtable[fd].cur > inode.size){
 		return 1;
