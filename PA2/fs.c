@@ -64,10 +64,9 @@ static blkid sfs_alloc_block()
 
 			u32 bitmap = freemap[fm_byte];
 
+
 			if(bitmap & 0xFFFF != 0){
-				//There is a free bit at this index in the freemap
-				//BID = BLOCK ID
-							
+				//There is a free bit at this index in the freemap					
 				u32 mask = 0x1;
 				u32 result;
 				count = 0;
@@ -110,7 +109,6 @@ static blkid sfs_alloc_block()
  */
 static void sfs_free_block(blkid bid)
 {
-	printf("\nFREEING BLOCK %d\n", bid);
 	/* TODO find the entry and bit that correspond to the block */
 
 	/* TODO unset the bit and flush the freemap */
@@ -126,12 +124,7 @@ static void sfs_free_block(blkid bid)
 	sfs_read_block(freemap, fm_block);
 
 	bitmap = freemap[bid/32];
-	printf("Freemap byte: %d\n", bid/32);
-
-	printf("BID: %d\n", bid);
-	printf("BITMAP VALUE BEFORE: %#x\n", bitmap);
 	bitmap = bitmap & ~(1<<(bid%32));
-	printf("BITMAP VALUE AFTER : %#x\n", bitmap);
 
 	freemap[bid/32] = bitmap;
 
@@ -149,15 +142,59 @@ static void sfs_resize_file(int fd, u32 new_size)
 	int frame_size = BLOCK_SIZE * SFS_FRAME_COUNT;
 	/* old file size */
 	int old_size = fdtable[fd].inode.size;
+	printf("\n\nResizing file\nOld size: %d\nNew size: %d\n\n", old_size, new_size);
 	/* how many frames are used before resizing */
 	int old_nframe = (old_size + frame_size -1) / frame_size;
+	//Opening a file always results in at least one frame
+	if(old_nframe == 0){
+		old_nframe++;
+	}
+	printf("old_nframe: %d\n", old_nframe);
 	/* how many frames are required after resizing */
 	int new_nframe = (new_size + frame_size - 1) / frame_size;
+	printf("new_nframe: %d\n", new_nframe);
 	int i, j;
-	blkid frame_bid = 0;
+	char inode_ptr[BLOCK_SIZE];
+	char tmp[BLOCK_SIZE];
+	
+	sfs_inode_t inode;
+	
+	sfs_read_block(inode_ptr, fdtable[fd].inode_bid);
+	inode = *(sfs_inode_t*)inode_ptr;
+
+	blkid frame_bid = inode.first_frame;
 	sfs_inode_frame_t frame;
 
 	/* TODO: check if new frames are required */
+	int count = old_nframe;
+	while(count < new_nframe){
+		printf("ALLOCATING A NEW FRAME\n");	
+
+		sfs_read_block(tmp, frame_bid);
+		frame = *(sfs_inode_frame_t*)tmp;
+
+		blkid new_frame_bid = sfs_alloc_block();
+		frame.next = new_frame_bid;	
+		for(i = 0; i < SFS_FRAME_COUNT; i++){
+			frame.content[i] = sfs_alloc_block();
+		}	
+		sfs_write_block(&frame, frame_bid);
+
+		frame_bid = new_frame_bid;
+		count++;
+	}
+
+		sfs_read_block(tmp, inode.first_frame);
+		frame = *(sfs_inode_frame_t*)tmp;
+		printf("New frame bid: %d\n", frame.next);
+
+	inode.size = new_size;
+	printf("INODE BID: %d\n", fdtable[fd].inode_bid);
+	sfs_write_block(&inode, fdtable[fd].inode_bid);
+
+	sfs_read_block(tmp, fdtable[fd].inode_bid);
+	inode = *(sfs_inode_t*)tmp;
+	printf("DEBUGGING NEW SIZE: %d\n", inode.size);
 	
 	/* TODO: allocate a full frame */
 
@@ -176,6 +213,7 @@ static void sfs_resize_file(int fd, u32 new_size)
  */
 static u32 sfs_get_file_content(blkid *bids, int fd, u32 cur, u32 length)
 {
+	printf("GETTING USED BLOCKS\n");
 	u32 start;		//Starting block of content
 	u32 end;		//Ending block of content
 	sfs_inode_t inode;
@@ -184,10 +222,6 @@ static u32 sfs_get_file_content(blkid *bids, int fd, u32 cur, u32 length)
 	char tmp[BLOCK_SIZE];
 	char frame_ptr[BLOCK_SIZE];
 	u32 num_bids = 0;			//Counts the number of bids in the array
-
-	/* TODO: find blocks between start and end.
-	   Traverse the frame list if needed
-	*/
 
 	//Get the bid of the desired frame
 	fd_struct_t fd_struct = fdtable[fd];
@@ -210,6 +244,11 @@ static u32 sfs_get_file_content(blkid *bids, int fd, u32 cur, u32 length)
 
 		sfs_read_block(frame_ptr, frame_bid);
 		frame = *(sfs_inode_frame_t*)frame_ptr;
+		printf("get_file_content\n");
+		printf("Current frame bid: %d \nNext frame: %d\n", frame_bid, frame.next);
+
+		//printf("Current frame bid: %d\n", frame_bid);
+		//printf("Next frame bid: %d\n", frame.next);
 
 		//Iterate through the content array of the frame
 		while(block_count < SFS_FRAME_COUNT && blocks_remaining > 0){
@@ -223,15 +262,13 @@ static u32 sfs_get_file_content(blkid *bids, int fd, u32 cur, u32 length)
 		if(blocks_remaining != 0){
 			frame_bid = frame.next;
 		}
-	
 	}
-
+	printf("FINISHED GETTING USED BLOCKS\n");
 	return num_bids;
 }
 
 /*
  * Find the directory of the given name.
- *
  * Return block id for the directory or zero if not found
  */
 static blkid sfs_find_dir(char *dirname)
@@ -242,10 +279,6 @@ static blkid sfs_find_dir(char *dirname)
 	//While the value of next_dir != 0, continue traversing the 
 	//list of directories until dirname is found
 
-	//Need to get a function to return the directory at the block
-	//specified
-	
-	/* TODO: start from the sb.first_dir, traverse the linked list */
 	dir_bid = sb.first_dir;
 	char block_ptr[BLOCK_SIZE];
 
@@ -290,7 +323,6 @@ int sfs_mkfs()
 	memset(freemap, 0, BLOCK_SIZE);
 	/* just to enlarge the whole file */
 	sfs_write_block(freemap, sb.nblocks);
-
 
 	/* initializing freemap */
 	freemap[0] = 0x3; /* 11b, freemap block and sb used*/
@@ -405,15 +437,6 @@ int sfs_rmdir(char *dirname)
 		return -1;
 	}
 
-	
-
-	/* TODO: check if no files 
-		DO THIS
-		DO THIS
-		DO THIS
-		DO THIS
-	 	DO THIS */
-
 	if(sb.first_dir == 0 || dir_bid == 0){
 		//The directory does not exist
 		return -1;
@@ -466,7 +489,6 @@ int sfs_rmdir(char *dirname)
 			dir.next_dir = block_to_copy;
 
 			sfs_write_block(&dir, current_dir);				
-						
 		}
 	}
 
@@ -589,12 +611,11 @@ int sfs_open(char *dirname, char *name)
 	}
 
 	/* TODO: create a new file */
-	
 	if(fd_set == 0){
 		printf("CREATING A NEW FILE\n");
 		//Allocate a block for the inode
 		blkid new_inode_bid = sfs_alloc_block();
-
+		
 		//Put the inode bid into the directory inode array
 		dir.inodes[free_inode] = new_inode_bid;
 		sfs_write_block(&dir, dir_bid);
@@ -608,6 +629,7 @@ int sfs_open(char *dirname, char *name)
 
 		//Place the inode in the file descriptor array
 		fd.inode = inode;
+		
 		fd.inode_bid = new_inode_bid;
 
 		sfs_write_block(&inode, new_inode_bid);
@@ -785,7 +807,6 @@ int sfs_ls()
 int sfs_write(int fd, void *buf, int length)
 {
 	int remaining, offset, to_copy;
-	int frame_start, frame_end, content_num;
 	char *p = (char *)buf;
 	char tmp[BLOCK_SIZE];
 	char inode_ptr[BLOCK_SIZE];
@@ -794,52 +815,27 @@ int sfs_write(int fd, void *buf, int length)
 
 	sfs_inode_t inode;
 	remaining = length;
+	offset = cur % BLOCK_SIZE;
 
 	int numBids = (length / BLOCK_SIZE) + 1; 
 	blkid bids[numBids];
 
 	sfs_read_block(inode_ptr, fdtable[fd].inode_bid);
 	inode = *(sfs_inode_t*)inode_ptr;
-
 	blkid frame_bid = inode.first_frame;
 
 	/* TODO: check if we need to resize */
-
-	
-	//Find frame holding the cursor, and the end frame
-	frame_start = cur / (SFS_FRAME_COUNT * BLOCK_SIZE);
-	frame_end = (cur + length) / (SFS_FRAME_COUNT * BLOCK_SIZE);
-	content_num = cur / BLOCK_SIZE;
-	offset = cur % BLOCK_SIZE;
-
-	//Traverse the frames and check if frame_num exists
 	sfs_inode_frame_t frame;
-	int count = 0;
-
 	sfs_read_block(tmp, frame_bid);
 	frame = *(sfs_inode_frame_t*)tmp;
 
-	/*****************************************
-	 TO RELOCATE
-	
-	while(count < frame_end){
-		
-
-		//If the next frame points to nothing, create another frame
-		if(frame.next == 0){
-			printf("sfs_write: Extending file!\n");
-			blkid new_bid = sfs_alloc_block();
-			frame.next = new_bid;
-			sfs_write_block(&frame, frame_bid);
-			frame_bid = new_bid;
-		} else{
-			printf("sfs_write: Checking next frame\n");
-			frame_bid = frame.next;
-		}
-		count++;
+	if( (length + cur) > inode.size){
+		u32 new_size = length + cur;
+		printf("Length: %d\tCur: %d\tInode size: %d\n", length, cur, inode.size);
+		printf("CURRENT SIZE: %d\tNEW SIZE: %d\n", inode.size, new_size);
+		fdtable[fd].inode = inode;
+		sfs_resize_file(fd, new_size);
 	}
-
-	*******************************************************/
 
 	/* TODO: get the block ids of all contents (using sfs_get_file_content() */
 	int num_blocks = sfs_get_file_content(bids, fd, cur, length);
@@ -899,22 +895,10 @@ int sfs_write(int fd, void *buf, int length)
 		bid_count++;
 	}
 
-	//Update size of file in inode
 	printf("Cursor position: %d\n", cur);	
-	if(cur > inode.size){
-		inode.size = cur;
-	}
 
-	//inode.size = length - remaining;
-
-	sfs_write_block(&inode, fdtable[fd].inode_bid);
-
-	/* TODO: update the cursor and free the temp buffer
-	   for sfs_get_file_content()
-	*/
 	fdtable[fd].cur = cur;
 
-	//RETURN BYTES WRITTEN
 	return length - remaining;
 }
 
@@ -972,7 +956,7 @@ int sfs_read(int fd, void *buf, int length)
 	printf("Content block:%d\n", content_blk);
 	//Check frames to determine if all content blocks exist
 	while(count < num_blocks){
-		printf("READING FRAME\n");
+		printf("READING FRAME: %d\n", frame_bid);
 		//Read the next frame
 		sfs_read_block(tmp, frame_bid);
 		frame = *(sfs_inode_frame_t*)tmp;
@@ -1099,10 +1083,7 @@ int sfs_seek(int fd, int relative, int loc)
 	return 0;
 }
 
-/*
- * Check if we reach the EOF(end-of-file).
- * 
- * This function returns 1 if it is EOF, otherwise 0.
+/* This function returns 1 if it is EOF, otherwise 0.
  */
 int sfs_eof(int fd)
 {
@@ -1110,6 +1091,7 @@ int sfs_eof(int fd)
 	sfs_read_block(inode_ptr, fdtable[fd].inode_bid);
 	sfs_inode_t inode = *(sfs_inode_t*)inode_ptr;
 
+	printf("\n\nsfs_eof: \nINODE BID: %d\n", fdtable[fd].inode_bid);
 	printf("Cursor position: %d\n", fdtable[fd].cur);
 	printf("File size: %d\n", inode.size);
 
