@@ -1,0 +1,7014 @@
+
+SFS_PRINT_INFO
+Number of blocks: 1024
+First dir: 0
+Num freemap blocks: 1
+
+FREEBLOCK INFO
+freemap[0] = 0x3
+
+1: PASS
+
+
+BITMAP[0]: 0x3
+finding first free block
+Free block: 2
+
+
+
+BITMAP[0]: 0x7
+finding first free block
+Free block: 3
+
+
+***********LSDIR****************
+0: sb		 2
+2: root 	 3
+3: haha 	 0
+Number of directories: 2
+***********END LSDIR************
+
+
+
+BITMAP[0]: 0xf
+finding first free block
+Free block: 4
+
+--------------
+
+***********LSDIR****************
+0: sb		 2
+2: root 	 3
+3: haha 	 4
+4: wawa 	 0
+Number of directories: 3
+***********END LSDIR************
+
+--------------
+
+***********LSDIR****************
+0: sb		 2
+2: root 	 4
+4: wawa 	 0
+Number of directories: 2
+***********END LSDIR************
+
+--------------
+
+***********LSDIR****************
+0: sb		 0
+Number of directories: 0
+***********END LSDIR************
+
+
+
+BITMAP[0]: 0x3
+finding first free block
+Free block: 2
+
+2: PASS
+CREATING A NEW FILE
+
+
+BITMAP[0]: 0x7
+finding first free block
+Free block: 3
+
+
+
+BITMAP[0]: 0xf
+finding first free block
+Free block: 4
+
+FIRST FRAME: 4
+FILE NAME: file1
+
+
+BITMAP[0]: 0x1f
+finding first free block
+Free block: 5
+
+
+fd: 0
+Inode bid: 3
+Dir bid: 2
+
+root:
+file1
+
+CREATING A NEW FILE
+
+
+BITMAP[0]: 0x3f
+finding first free block
+Free block: 6
+
+
+
+BITMAP[0]: 0x7f
+finding first free block
+Free block: 7
+
+FIRST FRAME: 7
+FILE NAME: file1-1
+
+
+BITMAP[0]: 0xff
+finding first free block
+Free block: 8
+
+
+fd: 1
+Inode bid: 6
+Dir bid: 2
+CREATING A NEW FILE
+
+
+BITMAP[0]: 0x1ff
+finding first free block
+Free block: 9
+
+
+
+BITMAP[0]: 0x3ff
+finding first free block
+Free block: 10
+
+FIRST FRAME: 10
+FILE NAME: file1-2
+
+
+BITMAP[0]: 0x7ff
+finding first free block
+Free block: 11
+
+
+fd: 2
+Inode bid: 9
+Dir bid: 2
+
+root:
+file1
+file1-1
+file1-2
+
+fd num: 1
+File in directory: 2
+Inode to remove: 6
+Frame number: 7
+fd num: 0
+File in directory: 2
+Inode to remove: 3
+Frame number: 4
+
+root:
+file1-2
+
+fd num: 2
+File in directory: 2
+Inode to remove: 9
+Frame number: 10
+
+root:
+
+3: PASS
+CREATING A NEW FILE
+
+
+BITMAP[0]: 0x6df
+finding first free block
+Free block: 5
+
+
+
+BITMAP[0]: 0x6ff
+finding first free block
+Free block: 8
+
+FIRST FRAME: 8
+FILE NAME: file2
+
+
+BITMAP[0]: 0x7ff
+finding first free block
+Free block: 11
+
+
+fd: 3
+Inode bid: 5
+Dir bid: 2
+
+
+Resizing file
+Old size: 0
+New size: 13
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 5
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 11
+Writing to frame bid: 8
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 13
+Offset: 0
+PARTIAL WRITE
+Cursor position: 13
+
+fd: 3
+Inode bid: 5
+Dir bid: 2
+
+
+Entering sfs_read
+offset: 0
+READING FRAME: 8
+content[0]: 11
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 11
+Writing to frame bid: 8
+FINISHED GETTING USED BLOCKS
+PARTIAL READ
+4: PASS
+CREATING A NEW FILE
+
+
+BITMAP[0]: 0xfff
+finding first free block
+Free block: 12
+
+
+
+BITMAP[0]: 0x1fff
+finding first free block
+Free block: 13
+
+FIRST FRAME: 13
+FILE NAME: file3
+
+
+BITMAP[0]: 0x3fff
+finding first free block
+Free block: 14
+
+
+fd: 3
+Inode bid: 12
+Dir bid: 2
+
+
+Resizing file
+Old size: 0
+New size: 13
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 13
+Offset: 0
+PARTIAL WRITE
+Cursor position: 13
+NEW CURSOR POSITION: 6
+
+
+Entering sfs_read
+offset: 6
+READING FRAME: 13
+content[0]: 14
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+SMALL READ
+5: PASS
+CREATING A NEW FILE
+
+
+BITMAP[0]: 0x7fff
+finding first free block
+Free block: 15
+
+
+
+BITMAP[0]: 0xffff
+finding first free block
+Free block: 16
+
+FIRST FRAME: 16
+FILE NAME: file4
+
+
+BITMAP[0]: 0x1ffff
+finding first free block
+Free block: 17
+
+
+fd: 3
+Inode bid: 15
+Dir bid: 2
+
+
+Resizing file
+Old size: 0
+New size: 13
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 15
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 17
+Writing to frame bid: 16
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 13
+Offset: 0
+PARTIAL WRITE
+Cursor position: 13
+NEW CURSOR POSITION: 6
+
+
+Entering sfs_read
+offset: 6
+READING FRAME: 16
+content[0]: 17
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 17
+Writing to frame bid: 16
+FINISHED GETTING USED BLOCKS
+SMALL READ
+
+
+Entering sfs_read
+offset: 7
+READING FRAME: 16
+content[0]: 17
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 17
+Writing to frame bid: 16
+FINISHED GETTING USED BLOCKS
+SMALL READ
+
+
+Entering sfs_read
+offset: 8
+READING FRAME: 16
+content[0]: 17
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 17
+Writing to frame bid: 16
+FINISHED GETTING USED BLOCKS
+SMALL READ
+
+
+Entering sfs_read
+offset: 9
+READING FRAME: 16
+content[0]: 17
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 17
+Writing to frame bid: 16
+FINISHED GETTING USED BLOCKS
+SMALL READ
+
+
+Entering sfs_read
+offset: 10
+READING FRAME: 16
+content[0]: 17
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 17
+Writing to frame bid: 16
+FINISHED GETTING USED BLOCKS
+SMALL READ
+
+
+Entering sfs_read
+offset: 11
+READING FRAME: 16
+content[0]: 17
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 17
+Writing to frame bid: 16
+FINISHED GETTING USED BLOCKS
+SMALL READ
+
+
+Entering sfs_read
+offset: 12
+READING FRAME: 16
+content[0]: 17
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 17
+Writing to frame bid: 16
+FINISHED GETTING USED BLOCKS
+SMALL READ
+
+
+Entering sfs_read
+offset: 13
+READING FRAME: 16
+content[0]: 17
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 17
+Writing to frame bid: 16
+FINISHED GETTING USED BLOCKS
+SMALL READ
+6: PASS
+CREATING A NEW FILE
+
+
+BITMAP[0]: 0x3ffff
+finding first free block
+Free block: 18
+
+
+
+BITMAP[0]: 0x7ffff
+finding first free block
+Free block: 19
+
+FIRST FRAME: 19
+FILE NAME: file5
+
+
+BITMAP[0]: 0xfffff
+finding first free block
+Free block: 20
+
+
+fd: 3
+Inode bid: 18
+Dir bid: 2
+
+
+Resizing file
+Old size: 0
+New size: 14
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 18
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 20
+Writing to frame bid: 19
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 14
+Offset: 0
+PARTIAL WRITE
+Cursor position: 14
+NEW CURSOR POSITION: 6
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 20
+Writing to frame bid: 19
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 7
+Offset: 6
+CURSOR OFFSET: 6
+SMALL COPY
+Cursor position: 13
+NEW CURSOR POSITION: 0
+
+
+Entering sfs_read
+offset: 0
+READING FRAME: 19
+content[0]: 20
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 20
+Writing to frame bid: 19
+FINISHED GETTING USED BLOCKS
+PARTIAL READ
+7: PASS
+CREATING A NEW FILE
+
+
+BITMAP[0]: 0x1fffff
+finding first free block
+Free block: 21
+
+
+
+BITMAP[0]: 0x3fffff
+finding first free block
+Free block: 22
+
+FIRST FRAME: 22
+FILE NAME: file6
+
+
+BITMAP[0]: 0x7fffff
+finding first free block
+Free block: 23
+
+
+fd: 3
+Inode bid: 21
+Dir bid: 2
+
+
+Resizing file
+Old size: 0
+New size: 14
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 21
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 23
+Writing to frame bid: 22
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 14
+Offset: 0
+PARTIAL WRITE
+Cursor position: 14
+NEW CURSOR POSITION: 6
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 23
+Writing to frame bid: 22
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 7
+Offset: 6
+CURSOR OFFSET: 6
+SMALL COPY
+Cursor position: 13
+
+
+Resizing file
+Old size: 14
+New size: 33
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 21
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 23
+Writing to frame bid: 22
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 20
+Offset: 13
+CURSOR OFFSET: 13
+SMALL COPY
+Cursor position: 33
+
+
+Resizing file
+Old size: 33
+New size: 63
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 21
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 23
+Writing to frame bid: 22
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 30
+Offset: 33
+CURSOR OFFSET: 33
+SMALL COPY
+Cursor position: 63
+NEW CURSOR POSITION: 0
+
+
+Entering sfs_read
+offset: 0
+READING FRAME: 22
+content[0]: 23
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 23
+Writing to frame bid: 22
+FINISHED GETTING USED BLOCKS
+PARTIAL READ
+8: PASS
+CREATING A NEW FILE
+
+
+BITMAP[0]: 0xffffff
+finding first free block
+Free block: 24
+
+
+
+BITMAP[0]: 0x1ffffff
+finding first free block
+Free block: 25
+
+FIRST FRAME: 25
+FILE NAME: file7
+
+
+BITMAP[0]: 0x3ffffff
+finding first free block
+Free block: 26
+
+
+fd: 3
+Inode bid: 24
+Dir bid: 2
+
+
+Resizing file
+Old size: 0
+New size: 2
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 24
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 26
+Writing to frame bid: 25
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 2
+Offset: 0
+PARTIAL WRITE
+Cursor position: 2
+NEW CURSOR POSITION: 6
+
+
+Resizing file
+Old size: 2
+New size: 11
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 24
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 26
+Writing to frame bid: 25
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 5
+Offset: 6
+CURSOR OFFSET: 6
+SMALL COPY
+Cursor position: 11
+inode size: 11
+Seek end cur 5
+NEW CURSOR POSITION: 5
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 26
+Writing to frame bid: 25
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 1
+Offset: 5
+CURSOR OFFSET: 5
+SMALL COPY
+Cursor position: 6
+NEW CURSOR POSITION: 11
+
+
+Resizing file
+Old size: 11
+New size: 13
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 24
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 26
+Writing to frame bid: 25
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 2
+Offset: 11
+CURSOR OFFSET: 11
+SMALL COPY
+Cursor position: 13
+inode size: 13
+Seek end cur 2
+NEW CURSOR POSITION: 2
+NEW CURSOR POSITION: 0
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 26
+Writing to frame bid: 25
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 5
+Offset: 0
+PARTIAL WRITE
+Cursor position: 5
+NEW CURSOR POSITION: 0
+
+
+Entering sfs_read
+offset: 0
+READING FRAME: 25
+content[0]: 26
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 26
+Writing to frame bid: 25
+FINISHED GETTING USED BLOCKS
+PARTIAL READ
+9: PASS
+
+fd: 3
+Inode bid: 12
+Dir bid: 2
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 0
+PARTIAL WRITE
+Cursor position: 12
+
+
+Resizing file
+Old size: 13
+New size: 24
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 12
+CURSOR OFFSET: 12
+SMALL COPY
+Cursor position: 24
+
+
+Resizing file
+Old size: 24
+New size: 36
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 24
+CURSOR OFFSET: 24
+SMALL COPY
+Cursor position: 36
+
+
+Resizing file
+Old size: 36
+New size: 48
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 36
+CURSOR OFFSET: 36
+SMALL COPY
+Cursor position: 48
+
+
+Resizing file
+Old size: 48
+New size: 60
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 48
+CURSOR OFFSET: 48
+SMALL COPY
+Cursor position: 60
+
+
+Resizing file
+Old size: 60
+New size: 72
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 60
+CURSOR OFFSET: 60
+SMALL COPY
+Cursor position: 72
+
+
+Resizing file
+Old size: 72
+New size: 84
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 72
+CURSOR OFFSET: 72
+SMALL COPY
+Cursor position: 84
+
+
+Resizing file
+Old size: 84
+New size: 96
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 84
+CURSOR OFFSET: 84
+SMALL COPY
+Cursor position: 96
+
+
+Resizing file
+Old size: 96
+New size: 108
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 96
+CURSOR OFFSET: 96
+SMALL COPY
+Cursor position: 108
+
+
+Resizing file
+Old size: 108
+New size: 120
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 108
+CURSOR OFFSET: 108
+SMALL COPY
+Cursor position: 120
+
+
+Resizing file
+Old size: 120
+New size: 132
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 120
+CURSOR OFFSET: 120
+SMALL COPY
+Cursor position: 132
+
+
+Resizing file
+Old size: 132
+New size: 144
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 132
+CURSOR OFFSET: 132
+SMALL COPY
+Cursor position: 144
+
+
+Resizing file
+Old size: 144
+New size: 156
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 144
+CURSOR OFFSET: 144
+SMALL COPY
+Cursor position: 156
+
+
+Resizing file
+Old size: 156
+New size: 168
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 156
+CURSOR OFFSET: 156
+SMALL COPY
+Cursor position: 168
+
+
+Resizing file
+Old size: 168
+New size: 180
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 168
+CURSOR OFFSET: 168
+SMALL COPY
+Cursor position: 180
+
+
+Resizing file
+Old size: 180
+New size: 192
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 180
+CURSOR OFFSET: 180
+SMALL COPY
+Cursor position: 192
+
+
+Resizing file
+Old size: 192
+New size: 204
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 192
+CURSOR OFFSET: 192
+SMALL COPY
+Cursor position: 204
+
+
+Resizing file
+Old size: 204
+New size: 216
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 204
+CURSOR OFFSET: 204
+SMALL COPY
+Cursor position: 216
+
+
+Resizing file
+Old size: 216
+New size: 228
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 216
+CURSOR OFFSET: 216
+SMALL COPY
+Cursor position: 228
+
+
+Resizing file
+Old size: 228
+New size: 240
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 228
+CURSOR OFFSET: 228
+SMALL COPY
+Cursor position: 240
+
+
+Resizing file
+Old size: 240
+New size: 252
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 240
+CURSOR OFFSET: 240
+SMALL COPY
+Cursor position: 252
+
+
+Resizing file
+Old size: 252
+New size: 264
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 252
+CURSOR OFFSET: 252
+SMALL COPY
+Cursor position: 264
+
+
+Resizing file
+Old size: 264
+New size: 276
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 264
+CURSOR OFFSET: 264
+SMALL COPY
+Cursor position: 276
+
+
+Resizing file
+Old size: 276
+New size: 288
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 276
+CURSOR OFFSET: 276
+SMALL COPY
+Cursor position: 288
+
+
+Resizing file
+Old size: 288
+New size: 300
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 288
+CURSOR OFFSET: 288
+SMALL COPY
+Cursor position: 300
+
+
+Resizing file
+Old size: 300
+New size: 312
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 300
+CURSOR OFFSET: 300
+SMALL COPY
+Cursor position: 312
+
+
+Resizing file
+Old size: 312
+New size: 324
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 312
+CURSOR OFFSET: 312
+SMALL COPY
+Cursor position: 324
+
+
+Resizing file
+Old size: 324
+New size: 336
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 324
+CURSOR OFFSET: 324
+SMALL COPY
+Cursor position: 336
+
+
+Resizing file
+Old size: 336
+New size: 348
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 336
+CURSOR OFFSET: 336
+SMALL COPY
+Cursor position: 348
+
+
+Resizing file
+Old size: 348
+New size: 360
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 348
+CURSOR OFFSET: 348
+SMALL COPY
+Cursor position: 360
+
+
+Resizing file
+Old size: 360
+New size: 372
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 360
+CURSOR OFFSET: 360
+SMALL COPY
+Cursor position: 372
+
+
+Resizing file
+Old size: 372
+New size: 384
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 372
+CURSOR OFFSET: 372
+SMALL COPY
+Cursor position: 384
+
+
+Resizing file
+Old size: 384
+New size: 396
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 384
+CURSOR OFFSET: 384
+SMALL COPY
+Cursor position: 396
+
+
+Resizing file
+Old size: 396
+New size: 408
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 396
+CURSOR OFFSET: 396
+SMALL COPY
+Cursor position: 408
+
+
+Resizing file
+Old size: 408
+New size: 420
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 408
+CURSOR OFFSET: 408
+SMALL COPY
+Cursor position: 420
+
+
+Resizing file
+Old size: 420
+New size: 432
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 420
+CURSOR OFFSET: 420
+SMALL COPY
+Cursor position: 432
+
+
+Resizing file
+Old size: 432
+New size: 444
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 432
+CURSOR OFFSET: 432
+SMALL COPY
+Cursor position: 444
+
+
+Resizing file
+Old size: 444
+New size: 456
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 444
+CURSOR OFFSET: 444
+SMALL COPY
+Cursor position: 456
+
+
+Resizing file
+Old size: 456
+New size: 468
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 456
+CURSOR OFFSET: 456
+SMALL COPY
+Cursor position: 468
+
+
+Resizing file
+Old size: 468
+New size: 480
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 468
+CURSOR OFFSET: 468
+SMALL COPY
+Cursor position: 480
+
+
+Resizing file
+Old size: 480
+New size: 492
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 480
+CURSOR OFFSET: 480
+SMALL COPY
+Cursor position: 492
+
+
+Resizing file
+Old size: 492
+New size: 504
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 492
+CURSOR OFFSET: 492
+SMALL COPY
+Cursor position: 504
+
+
+Resizing file
+Old size: 504
+New size: 516
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 14
+Iterating through content arrays
+
+
+BITMAP[0]: 0x7ffffff
+finding first free block
+Free block: 27
+
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 2
+
+
+Bytes remaining: 12
+Offset: 504
+BIG COPY
+
+
+Bytes remaining: 4
+Offset: 0
+PARTIAL WRITE
+Cursor position: 516
+
+
+Resizing file
+Old size: 516
+New size: 528
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 4
+CURSOR OFFSET: 516
+SMALL COPY
+Cursor position: 528
+
+
+Resizing file
+Old size: 528
+New size: 540
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 16
+CURSOR OFFSET: 528
+SMALL COPY
+Cursor position: 540
+
+
+Resizing file
+Old size: 540
+New size: 552
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 28
+CURSOR OFFSET: 540
+SMALL COPY
+Cursor position: 552
+
+
+Resizing file
+Old size: 552
+New size: 564
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 40
+CURSOR OFFSET: 552
+SMALL COPY
+Cursor position: 564
+
+
+Resizing file
+Old size: 564
+New size: 576
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 52
+CURSOR OFFSET: 564
+SMALL COPY
+Cursor position: 576
+
+
+Resizing file
+Old size: 576
+New size: 588
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 64
+CURSOR OFFSET: 576
+SMALL COPY
+Cursor position: 588
+
+
+Resizing file
+Old size: 588
+New size: 600
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 76
+CURSOR OFFSET: 588
+SMALL COPY
+Cursor position: 600
+
+
+Resizing file
+Old size: 600
+New size: 612
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 88
+CURSOR OFFSET: 600
+SMALL COPY
+Cursor position: 612
+
+
+Resizing file
+Old size: 612
+New size: 624
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 100
+CURSOR OFFSET: 612
+SMALL COPY
+Cursor position: 624
+
+
+Resizing file
+Old size: 624
+New size: 636
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 112
+CURSOR OFFSET: 624
+SMALL COPY
+Cursor position: 636
+
+
+Resizing file
+Old size: 636
+New size: 648
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 124
+CURSOR OFFSET: 636
+SMALL COPY
+Cursor position: 648
+
+
+Resizing file
+Old size: 648
+New size: 660
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 136
+CURSOR OFFSET: 648
+SMALL COPY
+Cursor position: 660
+
+
+Resizing file
+Old size: 660
+New size: 672
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 148
+CURSOR OFFSET: 660
+SMALL COPY
+Cursor position: 672
+
+
+Resizing file
+Old size: 672
+New size: 684
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 160
+CURSOR OFFSET: 672
+SMALL COPY
+Cursor position: 684
+
+
+Resizing file
+Old size: 684
+New size: 696
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 172
+CURSOR OFFSET: 684
+SMALL COPY
+Cursor position: 696
+
+
+Resizing file
+Old size: 696
+New size: 708
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 184
+CURSOR OFFSET: 696
+SMALL COPY
+Cursor position: 708
+
+
+Resizing file
+Old size: 708
+New size: 720
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 196
+CURSOR OFFSET: 708
+SMALL COPY
+Cursor position: 720
+
+
+Resizing file
+Old size: 720
+New size: 732
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 208
+CURSOR OFFSET: 720
+SMALL COPY
+Cursor position: 732
+
+
+Resizing file
+Old size: 732
+New size: 744
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 220
+CURSOR OFFSET: 732
+SMALL COPY
+Cursor position: 744
+
+
+Resizing file
+Old size: 744
+New size: 756
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 232
+CURSOR OFFSET: 744
+SMALL COPY
+Cursor position: 756
+
+
+Resizing file
+Old size: 756
+New size: 768
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 244
+CURSOR OFFSET: 756
+SMALL COPY
+Cursor position: 768
+
+
+Resizing file
+Old size: 768
+New size: 780
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 256
+CURSOR OFFSET: 768
+SMALL COPY
+Cursor position: 780
+
+
+Resizing file
+Old size: 780
+New size: 792
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 268
+CURSOR OFFSET: 780
+SMALL COPY
+Cursor position: 792
+
+
+Resizing file
+Old size: 792
+New size: 804
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 280
+CURSOR OFFSET: 792
+SMALL COPY
+Cursor position: 804
+
+
+Resizing file
+Old size: 804
+New size: 816
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 292
+CURSOR OFFSET: 804
+SMALL COPY
+Cursor position: 816
+
+
+Resizing file
+Old size: 816
+New size: 828
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 304
+CURSOR OFFSET: 816
+SMALL COPY
+Cursor position: 828
+
+
+Resizing file
+Old size: 828
+New size: 840
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 316
+CURSOR OFFSET: 828
+SMALL COPY
+Cursor position: 840
+
+
+Resizing file
+Old size: 840
+New size: 852
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 328
+CURSOR OFFSET: 840
+SMALL COPY
+Cursor position: 852
+
+
+Resizing file
+Old size: 852
+New size: 864
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 340
+CURSOR OFFSET: 852
+SMALL COPY
+Cursor position: 864
+
+
+Resizing file
+Old size: 864
+New size: 876
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 352
+CURSOR OFFSET: 864
+SMALL COPY
+Cursor position: 876
+
+
+Resizing file
+Old size: 876
+New size: 888
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 364
+CURSOR OFFSET: 876
+SMALL COPY
+Cursor position: 888
+
+
+Resizing file
+Old size: 888
+New size: 900
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 376
+CURSOR OFFSET: 888
+SMALL COPY
+Cursor position: 900
+
+
+Resizing file
+Old size: 900
+New size: 912
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 388
+CURSOR OFFSET: 900
+SMALL COPY
+Cursor position: 912
+
+
+Resizing file
+Old size: 912
+New size: 924
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 400
+CURSOR OFFSET: 912
+SMALL COPY
+Cursor position: 924
+
+
+Resizing file
+Old size: 924
+New size: 936
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 412
+CURSOR OFFSET: 924
+SMALL COPY
+Cursor position: 936
+
+
+Resizing file
+Old size: 936
+New size: 948
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 424
+CURSOR OFFSET: 936
+SMALL COPY
+Cursor position: 948
+
+
+Resizing file
+Old size: 948
+New size: 960
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 436
+CURSOR OFFSET: 948
+SMALL COPY
+Cursor position: 960
+
+
+Resizing file
+Old size: 960
+New size: 972
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 448
+CURSOR OFFSET: 960
+SMALL COPY
+Cursor position: 972
+
+
+Resizing file
+Old size: 972
+New size: 984
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 460
+CURSOR OFFSET: 972
+SMALL COPY
+Cursor position: 984
+
+
+Resizing file
+Old size: 984
+New size: 996
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 472
+CURSOR OFFSET: 984
+SMALL COPY
+Cursor position: 996
+
+
+Resizing file
+Old size: 996
+New size: 1008
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 484
+CURSOR OFFSET: 996
+SMALL COPY
+Cursor position: 1008
+
+
+Resizing file
+Old size: 1008
+New size: 1020
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 496
+CURSOR OFFSET: 1008
+SMALL COPY
+Cursor position: 1020
+
+
+Resizing file
+Old size: 1020
+New size: 1032
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 27
+Iterating through content arrays
+
+
+BITMAP[0]: 0xfffffff
+finding first free block
+Free block: 28
+
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 2
+
+
+Bytes remaining: 12
+Offset: 508
+BIG COPY
+
+
+Bytes remaining: 8
+Offset: 0
+PARTIAL WRITE
+Cursor position: 1032
+
+
+Resizing file
+Old size: 1032
+New size: 1044
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 8
+CURSOR OFFSET: 1032
+SMALL COPY
+Cursor position: 1044
+
+
+Resizing file
+Old size: 1044
+New size: 1056
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 20
+CURSOR OFFSET: 1044
+SMALL COPY
+Cursor position: 1056
+
+
+Resizing file
+Old size: 1056
+New size: 1068
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 32
+CURSOR OFFSET: 1056
+SMALL COPY
+Cursor position: 1068
+
+
+Resizing file
+Old size: 1068
+New size: 1080
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 44
+CURSOR OFFSET: 1068
+SMALL COPY
+Cursor position: 1080
+
+
+Resizing file
+Old size: 1080
+New size: 1092
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 56
+CURSOR OFFSET: 1080
+SMALL COPY
+Cursor position: 1092
+
+
+Resizing file
+Old size: 1092
+New size: 1104
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 68
+CURSOR OFFSET: 1092
+SMALL COPY
+Cursor position: 1104
+
+
+Resizing file
+Old size: 1104
+New size: 1116
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 80
+CURSOR OFFSET: 1104
+SMALL COPY
+Cursor position: 1116
+
+
+Resizing file
+Old size: 1116
+New size: 1128
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 92
+CURSOR OFFSET: 1116
+SMALL COPY
+Cursor position: 1128
+
+
+Resizing file
+Old size: 1128
+New size: 1140
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 104
+CURSOR OFFSET: 1128
+SMALL COPY
+Cursor position: 1140
+
+
+Resizing file
+Old size: 1140
+New size: 1152
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 116
+CURSOR OFFSET: 1140
+SMALL COPY
+Cursor position: 1152
+
+
+Resizing file
+Old size: 1152
+New size: 1164
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 128
+CURSOR OFFSET: 1152
+SMALL COPY
+Cursor position: 1164
+
+
+Resizing file
+Old size: 1164
+New size: 1176
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 140
+CURSOR OFFSET: 1164
+SMALL COPY
+Cursor position: 1176
+
+
+Resizing file
+Old size: 1176
+New size: 1188
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 152
+CURSOR OFFSET: 1176
+SMALL COPY
+Cursor position: 1188
+
+
+Resizing file
+Old size: 1188
+New size: 1200
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 164
+CURSOR OFFSET: 1188
+SMALL COPY
+Cursor position: 1200
+
+
+Resizing file
+Old size: 1200
+New size: 1212
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 176
+CURSOR OFFSET: 1200
+SMALL COPY
+Cursor position: 1212
+
+
+Resizing file
+Old size: 1212
+New size: 1224
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 188
+CURSOR OFFSET: 1212
+SMALL COPY
+Cursor position: 1224
+
+
+Resizing file
+Old size: 1224
+New size: 1236
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 200
+CURSOR OFFSET: 1224
+SMALL COPY
+Cursor position: 1236
+
+
+Resizing file
+Old size: 1236
+New size: 1248
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 212
+CURSOR OFFSET: 1236
+SMALL COPY
+Cursor position: 1248
+
+
+Resizing file
+Old size: 1248
+New size: 1260
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 224
+CURSOR OFFSET: 1248
+SMALL COPY
+Cursor position: 1260
+
+
+Resizing file
+Old size: 1260
+New size: 1272
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 236
+CURSOR OFFSET: 1260
+SMALL COPY
+Cursor position: 1272
+
+
+Resizing file
+Old size: 1272
+New size: 1284
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 248
+CURSOR OFFSET: 1272
+SMALL COPY
+Cursor position: 1284
+
+
+Resizing file
+Old size: 1284
+New size: 1296
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 260
+CURSOR OFFSET: 1284
+SMALL COPY
+Cursor position: 1296
+
+
+Resizing file
+Old size: 1296
+New size: 1308
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 272
+CURSOR OFFSET: 1296
+SMALL COPY
+Cursor position: 1308
+
+
+Resizing file
+Old size: 1308
+New size: 1320
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 284
+CURSOR OFFSET: 1308
+SMALL COPY
+Cursor position: 1320
+
+
+Resizing file
+Old size: 1320
+New size: 1332
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 296
+CURSOR OFFSET: 1320
+SMALL COPY
+Cursor position: 1332
+
+
+Resizing file
+Old size: 1332
+New size: 1344
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 308
+CURSOR OFFSET: 1332
+SMALL COPY
+Cursor position: 1344
+
+
+Resizing file
+Old size: 1344
+New size: 1356
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 320
+CURSOR OFFSET: 1344
+SMALL COPY
+Cursor position: 1356
+
+
+Resizing file
+Old size: 1356
+New size: 1368
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 332
+CURSOR OFFSET: 1356
+SMALL COPY
+Cursor position: 1368
+
+
+Resizing file
+Old size: 1368
+New size: 1380
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 344
+CURSOR OFFSET: 1368
+SMALL COPY
+Cursor position: 1380
+
+
+Resizing file
+Old size: 1380
+New size: 1392
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 356
+CURSOR OFFSET: 1380
+SMALL COPY
+Cursor position: 1392
+
+
+Resizing file
+Old size: 1392
+New size: 1404
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 368
+CURSOR OFFSET: 1392
+SMALL COPY
+Cursor position: 1404
+
+
+Resizing file
+Old size: 1404
+New size: 1416
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 380
+CURSOR OFFSET: 1404
+SMALL COPY
+Cursor position: 1416
+
+
+Resizing file
+Old size: 1416
+New size: 1428
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 392
+CURSOR OFFSET: 1416
+SMALL COPY
+Cursor position: 1428
+
+
+Resizing file
+Old size: 1428
+New size: 1440
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 404
+CURSOR OFFSET: 1428
+SMALL COPY
+Cursor position: 1440
+
+
+Resizing file
+Old size: 1440
+New size: 1452
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 416
+CURSOR OFFSET: 1440
+SMALL COPY
+Cursor position: 1452
+
+
+Resizing file
+Old size: 1452
+New size: 1464
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 428
+CURSOR OFFSET: 1452
+SMALL COPY
+Cursor position: 1464
+
+
+Resizing file
+Old size: 1464
+New size: 1476
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 440
+CURSOR OFFSET: 1464
+SMALL COPY
+Cursor position: 1476
+
+
+Resizing file
+Old size: 1476
+New size: 1488
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 452
+CURSOR OFFSET: 1476
+SMALL COPY
+Cursor position: 1488
+
+
+Resizing file
+Old size: 1488
+New size: 1500
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 464
+CURSOR OFFSET: 1488
+SMALL COPY
+Cursor position: 1500
+
+
+Resizing file
+Old size: 1500
+New size: 1512
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 476
+CURSOR OFFSET: 1500
+SMALL COPY
+Cursor position: 1512
+
+
+Resizing file
+Old size: 1512
+New size: 1524
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 488
+CURSOR OFFSET: 1512
+SMALL COPY
+Cursor position: 1524
+
+
+Resizing file
+Old size: 1524
+New size: 1536
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 28
+Iterating through content arrays
+
+
+BITMAP[0]: 0x1fffffff
+finding first free block
+Free block: 29
+
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 2
+
+
+Bytes remaining: 12
+Offset: 500
+BIG COPY
+Cursor position: 1536
+
+
+Resizing file
+Old size: 1536
+New size: 1548
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 0
+PARTIAL WRITE
+Cursor position: 1548
+
+
+Resizing file
+Old size: 1548
+New size: 1560
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 12
+CURSOR OFFSET: 1548
+SMALL COPY
+Cursor position: 1560
+
+
+Resizing file
+Old size: 1560
+New size: 1572
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 24
+CURSOR OFFSET: 1560
+SMALL COPY
+Cursor position: 1572
+
+
+Resizing file
+Old size: 1572
+New size: 1584
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 36
+CURSOR OFFSET: 1572
+SMALL COPY
+Cursor position: 1584
+
+
+Resizing file
+Old size: 1584
+New size: 1596
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 48
+CURSOR OFFSET: 1584
+SMALL COPY
+Cursor position: 1596
+
+
+Resizing file
+Old size: 1596
+New size: 1608
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 60
+CURSOR OFFSET: 1596
+SMALL COPY
+Cursor position: 1608
+
+
+Resizing file
+Old size: 1608
+New size: 1620
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 72
+CURSOR OFFSET: 1608
+SMALL COPY
+Cursor position: 1620
+
+
+Resizing file
+Old size: 1620
+New size: 1632
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 84
+CURSOR OFFSET: 1620
+SMALL COPY
+Cursor position: 1632
+
+
+Resizing file
+Old size: 1632
+New size: 1644
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 96
+CURSOR OFFSET: 1632
+SMALL COPY
+Cursor position: 1644
+
+
+Resizing file
+Old size: 1644
+New size: 1656
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 108
+CURSOR OFFSET: 1644
+SMALL COPY
+Cursor position: 1656
+
+
+Resizing file
+Old size: 1656
+New size: 1668
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 120
+CURSOR OFFSET: 1656
+SMALL COPY
+Cursor position: 1668
+
+
+Resizing file
+Old size: 1668
+New size: 1680
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 132
+CURSOR OFFSET: 1668
+SMALL COPY
+Cursor position: 1680
+
+
+Resizing file
+Old size: 1680
+New size: 1692
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 144
+CURSOR OFFSET: 1680
+SMALL COPY
+Cursor position: 1692
+
+
+Resizing file
+Old size: 1692
+New size: 1704
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 156
+CURSOR OFFSET: 1692
+SMALL COPY
+Cursor position: 1704
+
+
+Resizing file
+Old size: 1704
+New size: 1716
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 168
+CURSOR OFFSET: 1704
+SMALL COPY
+Cursor position: 1716
+
+
+Resizing file
+Old size: 1716
+New size: 1728
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 180
+CURSOR OFFSET: 1716
+SMALL COPY
+Cursor position: 1728
+
+
+Resizing file
+Old size: 1728
+New size: 1740
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 192
+CURSOR OFFSET: 1728
+SMALL COPY
+Cursor position: 1740
+
+
+Resizing file
+Old size: 1740
+New size: 1752
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 204
+CURSOR OFFSET: 1740
+SMALL COPY
+Cursor position: 1752
+
+
+Resizing file
+Old size: 1752
+New size: 1764
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 216
+CURSOR OFFSET: 1752
+SMALL COPY
+Cursor position: 1764
+
+
+Resizing file
+Old size: 1764
+New size: 1776
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 228
+CURSOR OFFSET: 1764
+SMALL COPY
+Cursor position: 1776
+
+
+Resizing file
+Old size: 1776
+New size: 1788
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 240
+CURSOR OFFSET: 1776
+SMALL COPY
+Cursor position: 1788
+
+
+Resizing file
+Old size: 1788
+New size: 1800
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 252
+CURSOR OFFSET: 1788
+SMALL COPY
+Cursor position: 1800
+
+
+Resizing file
+Old size: 1800
+New size: 1812
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 264
+CURSOR OFFSET: 1800
+SMALL COPY
+Cursor position: 1812
+
+
+Resizing file
+Old size: 1812
+New size: 1824
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 276
+CURSOR OFFSET: 1812
+SMALL COPY
+Cursor position: 1824
+
+
+Resizing file
+Old size: 1824
+New size: 1836
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 288
+CURSOR OFFSET: 1824
+SMALL COPY
+Cursor position: 1836
+
+
+Resizing file
+Old size: 1836
+New size: 1848
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 300
+CURSOR OFFSET: 1836
+SMALL COPY
+Cursor position: 1848
+
+
+Resizing file
+Old size: 1848
+New size: 1860
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 312
+CURSOR OFFSET: 1848
+SMALL COPY
+Cursor position: 1860
+
+
+Resizing file
+Old size: 1860
+New size: 1872
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 324
+CURSOR OFFSET: 1860
+SMALL COPY
+Cursor position: 1872
+
+
+Resizing file
+Old size: 1872
+New size: 1884
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 336
+CURSOR OFFSET: 1872
+SMALL COPY
+Cursor position: 1884
+
+
+Resizing file
+Old size: 1884
+New size: 1896
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 348
+CURSOR OFFSET: 1884
+SMALL COPY
+Cursor position: 1896
+
+
+Resizing file
+Old size: 1896
+New size: 1908
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 360
+CURSOR OFFSET: 1896
+SMALL COPY
+Cursor position: 1908
+
+
+Resizing file
+Old size: 1908
+New size: 1920
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 372
+CURSOR OFFSET: 1908
+SMALL COPY
+Cursor position: 1920
+
+
+Resizing file
+Old size: 1920
+New size: 1932
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 384
+CURSOR OFFSET: 1920
+SMALL COPY
+Cursor position: 1932
+
+
+Resizing file
+Old size: 1932
+New size: 1944
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 396
+CURSOR OFFSET: 1932
+SMALL COPY
+Cursor position: 1944
+
+
+Resizing file
+Old size: 1944
+New size: 1956
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 408
+CURSOR OFFSET: 1944
+SMALL COPY
+Cursor position: 1956
+
+
+Resizing file
+Old size: 1956
+New size: 1968
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 420
+CURSOR OFFSET: 1956
+SMALL COPY
+Cursor position: 1968
+
+
+Resizing file
+Old size: 1968
+New size: 1980
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 432
+CURSOR OFFSET: 1968
+SMALL COPY
+Cursor position: 1980
+
+
+Resizing file
+Old size: 1980
+New size: 1992
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 444
+CURSOR OFFSET: 1980
+SMALL COPY
+Cursor position: 1992
+
+
+Resizing file
+Old size: 1992
+New size: 2004
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 456
+CURSOR OFFSET: 1992
+SMALL COPY
+Cursor position: 2004
+
+
+Resizing file
+Old size: 2004
+New size: 2016
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 468
+CURSOR OFFSET: 2004
+SMALL COPY
+Cursor position: 2016
+
+
+Resizing file
+Old size: 2016
+New size: 2028
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 480
+CURSOR OFFSET: 2016
+SMALL COPY
+Cursor position: 2028
+
+
+Resizing file
+Old size: 2028
+New size: 2040
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 492
+CURSOR OFFSET: 2028
+SMALL COPY
+Cursor position: 2040
+
+
+Resizing file
+Old size: 2040
+New size: 2052
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 29
+Iterating through content arrays
+
+
+BITMAP[0]: 0x3fffffff
+finding first free block
+Free block: 30
+
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 2
+
+
+Bytes remaining: 12
+Offset: 504
+BIG COPY
+
+
+Bytes remaining: 4
+Offset: 0
+PARTIAL WRITE
+Cursor position: 2052
+
+
+Resizing file
+Old size: 2052
+New size: 2064
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 4
+CURSOR OFFSET: 2052
+SMALL COPY
+Cursor position: 2064
+
+
+Resizing file
+Old size: 2064
+New size: 2076
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 16
+CURSOR OFFSET: 2064
+SMALL COPY
+Cursor position: 2076
+
+
+Resizing file
+Old size: 2076
+New size: 2088
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 28
+CURSOR OFFSET: 2076
+SMALL COPY
+Cursor position: 2088
+
+
+Resizing file
+Old size: 2088
+New size: 2100
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 40
+CURSOR OFFSET: 2088
+SMALL COPY
+Cursor position: 2100
+
+
+Resizing file
+Old size: 2100
+New size: 2112
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 52
+CURSOR OFFSET: 2100
+SMALL COPY
+Cursor position: 2112
+
+
+Resizing file
+Old size: 2112
+New size: 2124
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 64
+CURSOR OFFSET: 2112
+SMALL COPY
+Cursor position: 2124
+
+
+Resizing file
+Old size: 2124
+New size: 2136
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 76
+CURSOR OFFSET: 2124
+SMALL COPY
+Cursor position: 2136
+
+
+Resizing file
+Old size: 2136
+New size: 2148
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 88
+CURSOR OFFSET: 2136
+SMALL COPY
+Cursor position: 2148
+
+
+Resizing file
+Old size: 2148
+New size: 2160
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 100
+CURSOR OFFSET: 2148
+SMALL COPY
+Cursor position: 2160
+
+
+Resizing file
+Old size: 2160
+New size: 2172
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 112
+CURSOR OFFSET: 2160
+SMALL COPY
+Cursor position: 2172
+
+
+Resizing file
+Old size: 2172
+New size: 2184
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 124
+CURSOR OFFSET: 2172
+SMALL COPY
+Cursor position: 2184
+
+
+Resizing file
+Old size: 2184
+New size: 2196
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 136
+CURSOR OFFSET: 2184
+SMALL COPY
+Cursor position: 2196
+
+
+Resizing file
+Old size: 2196
+New size: 2208
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 148
+CURSOR OFFSET: 2196
+SMALL COPY
+Cursor position: 2208
+
+
+Resizing file
+Old size: 2208
+New size: 2220
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 160
+CURSOR OFFSET: 2208
+SMALL COPY
+Cursor position: 2220
+
+
+Resizing file
+Old size: 2220
+New size: 2232
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 172
+CURSOR OFFSET: 2220
+SMALL COPY
+Cursor position: 2232
+
+
+Resizing file
+Old size: 2232
+New size: 2244
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 184
+CURSOR OFFSET: 2232
+SMALL COPY
+Cursor position: 2244
+
+
+Resizing file
+Old size: 2244
+New size: 2256
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 196
+CURSOR OFFSET: 2244
+SMALL COPY
+Cursor position: 2256
+
+
+Resizing file
+Old size: 2256
+New size: 2268
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 208
+CURSOR OFFSET: 2256
+SMALL COPY
+Cursor position: 2268
+
+
+Resizing file
+Old size: 2268
+New size: 2280
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 220
+CURSOR OFFSET: 2268
+SMALL COPY
+Cursor position: 2280
+
+
+Resizing file
+Old size: 2280
+New size: 2292
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 232
+CURSOR OFFSET: 2280
+SMALL COPY
+Cursor position: 2292
+
+
+Resizing file
+Old size: 2292
+New size: 2304
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 244
+CURSOR OFFSET: 2292
+SMALL COPY
+Cursor position: 2304
+
+
+Resizing file
+Old size: 2304
+New size: 2316
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 256
+CURSOR OFFSET: 2304
+SMALL COPY
+Cursor position: 2316
+
+
+Resizing file
+Old size: 2316
+New size: 2328
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 268
+CURSOR OFFSET: 2316
+SMALL COPY
+Cursor position: 2328
+
+
+Resizing file
+Old size: 2328
+New size: 2340
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 280
+CURSOR OFFSET: 2328
+SMALL COPY
+Cursor position: 2340
+
+
+Resizing file
+Old size: 2340
+New size: 2352
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 292
+CURSOR OFFSET: 2340
+SMALL COPY
+Cursor position: 2352
+
+
+Resizing file
+Old size: 2352
+New size: 2364
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 304
+CURSOR OFFSET: 2352
+SMALL COPY
+Cursor position: 2364
+
+
+Resizing file
+Old size: 2364
+New size: 2376
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 316
+CURSOR OFFSET: 2364
+SMALL COPY
+Cursor position: 2376
+
+
+Resizing file
+Old size: 2376
+New size: 2388
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 328
+CURSOR OFFSET: 2376
+SMALL COPY
+Cursor position: 2388
+
+
+Resizing file
+Old size: 2388
+New size: 2400
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 340
+CURSOR OFFSET: 2388
+SMALL COPY
+Cursor position: 2400
+
+
+Resizing file
+Old size: 2400
+New size: 2412
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 352
+CURSOR OFFSET: 2400
+SMALL COPY
+Cursor position: 2412
+
+
+Resizing file
+Old size: 2412
+New size: 2424
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 364
+CURSOR OFFSET: 2412
+SMALL COPY
+Cursor position: 2424
+
+
+Resizing file
+Old size: 2424
+New size: 2436
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 376
+CURSOR OFFSET: 2424
+SMALL COPY
+Cursor position: 2436
+
+
+Resizing file
+Old size: 2436
+New size: 2448
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 388
+CURSOR OFFSET: 2436
+SMALL COPY
+Cursor position: 2448
+
+
+Resizing file
+Old size: 2448
+New size: 2460
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 400
+CURSOR OFFSET: 2448
+SMALL COPY
+Cursor position: 2460
+
+
+Resizing file
+Old size: 2460
+New size: 2472
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 412
+CURSOR OFFSET: 2460
+SMALL COPY
+Cursor position: 2472
+
+
+Resizing file
+Old size: 2472
+New size: 2484
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 424
+CURSOR OFFSET: 2472
+SMALL COPY
+Cursor position: 2484
+
+
+Resizing file
+Old size: 2484
+New size: 2496
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 436
+CURSOR OFFSET: 2484
+SMALL COPY
+Cursor position: 2496
+
+
+Resizing file
+Old size: 2496
+New size: 2508
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 448
+CURSOR OFFSET: 2496
+SMALL COPY
+Cursor position: 2508
+
+
+Resizing file
+Old size: 2508
+New size: 2520
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 460
+CURSOR OFFSET: 2508
+SMALL COPY
+Cursor position: 2520
+
+
+Resizing file
+Old size: 2520
+New size: 2532
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 472
+CURSOR OFFSET: 2520
+SMALL COPY
+Cursor position: 2532
+
+
+Resizing file
+Old size: 2532
+New size: 2544
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 484
+CURSOR OFFSET: 2532
+SMALL COPY
+Cursor position: 2544
+
+
+Resizing file
+Old size: 2544
+New size: 2556
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 496
+CURSOR OFFSET: 2544
+SMALL COPY
+Cursor position: 2556
+
+
+Resizing file
+Old size: 2556
+New size: 2568
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 30
+Iterating through content arrays
+
+
+BITMAP[0]: 0x7fffffff
+finding first free block
+Free block: 31
+
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 2
+
+
+Bytes remaining: 12
+Offset: 508
+BIG COPY
+
+
+Bytes remaining: 8
+Offset: 0
+PARTIAL WRITE
+Cursor position: 2568
+
+
+Resizing file
+Old size: 2568
+New size: 2580
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 8
+CURSOR OFFSET: 2568
+SMALL COPY
+Cursor position: 2580
+
+
+Resizing file
+Old size: 2580
+New size: 2592
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 20
+CURSOR OFFSET: 2580
+SMALL COPY
+Cursor position: 2592
+
+
+Resizing file
+Old size: 2592
+New size: 2604
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 32
+CURSOR OFFSET: 2592
+SMALL COPY
+Cursor position: 2604
+
+
+Resizing file
+Old size: 2604
+New size: 2616
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 44
+CURSOR OFFSET: 2604
+SMALL COPY
+Cursor position: 2616
+
+
+Resizing file
+Old size: 2616
+New size: 2628
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 56
+CURSOR OFFSET: 2616
+SMALL COPY
+Cursor position: 2628
+
+
+Resizing file
+Old size: 2628
+New size: 2640
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 68
+CURSOR OFFSET: 2628
+SMALL COPY
+Cursor position: 2640
+
+
+Resizing file
+Old size: 2640
+New size: 2652
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 80
+CURSOR OFFSET: 2640
+SMALL COPY
+Cursor position: 2652
+
+
+Resizing file
+Old size: 2652
+New size: 2664
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 92
+CURSOR OFFSET: 2652
+SMALL COPY
+Cursor position: 2664
+
+
+Resizing file
+Old size: 2664
+New size: 2676
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 104
+CURSOR OFFSET: 2664
+SMALL COPY
+Cursor position: 2676
+
+
+Resizing file
+Old size: 2676
+New size: 2688
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 116
+CURSOR OFFSET: 2676
+SMALL COPY
+Cursor position: 2688
+
+
+Resizing file
+Old size: 2688
+New size: 2700
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 128
+CURSOR OFFSET: 2688
+SMALL COPY
+Cursor position: 2700
+
+
+Resizing file
+Old size: 2700
+New size: 2712
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 140
+CURSOR OFFSET: 2700
+SMALL COPY
+Cursor position: 2712
+
+
+Resizing file
+Old size: 2712
+New size: 2724
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 152
+CURSOR OFFSET: 2712
+SMALL COPY
+Cursor position: 2724
+
+
+Resizing file
+Old size: 2724
+New size: 2736
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 164
+CURSOR OFFSET: 2724
+SMALL COPY
+Cursor position: 2736
+
+
+Resizing file
+Old size: 2736
+New size: 2748
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 176
+CURSOR OFFSET: 2736
+SMALL COPY
+Cursor position: 2748
+
+
+Resizing file
+Old size: 2748
+New size: 2760
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 188
+CURSOR OFFSET: 2748
+SMALL COPY
+Cursor position: 2760
+
+
+Resizing file
+Old size: 2760
+New size: 2772
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 200
+CURSOR OFFSET: 2760
+SMALL COPY
+Cursor position: 2772
+
+
+Resizing file
+Old size: 2772
+New size: 2784
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 212
+CURSOR OFFSET: 2772
+SMALL COPY
+Cursor position: 2784
+
+
+Resizing file
+Old size: 2784
+New size: 2796
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 224
+CURSOR OFFSET: 2784
+SMALL COPY
+Cursor position: 2796
+
+
+Resizing file
+Old size: 2796
+New size: 2808
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 236
+CURSOR OFFSET: 2796
+SMALL COPY
+Cursor position: 2808
+
+
+Resizing file
+Old size: 2808
+New size: 2820
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 248
+CURSOR OFFSET: 2808
+SMALL COPY
+Cursor position: 2820
+
+
+Resizing file
+Old size: 2820
+New size: 2832
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 260
+CURSOR OFFSET: 2820
+SMALL COPY
+Cursor position: 2832
+
+
+Resizing file
+Old size: 2832
+New size: 2844
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 272
+CURSOR OFFSET: 2832
+SMALL COPY
+Cursor position: 2844
+
+
+Resizing file
+Old size: 2844
+New size: 2856
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 284
+CURSOR OFFSET: 2844
+SMALL COPY
+Cursor position: 2856
+
+
+Resizing file
+Old size: 2856
+New size: 2868
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 296
+CURSOR OFFSET: 2856
+SMALL COPY
+Cursor position: 2868
+
+
+Resizing file
+Old size: 2868
+New size: 2880
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 308
+CURSOR OFFSET: 2868
+SMALL COPY
+Cursor position: 2880
+
+
+Resizing file
+Old size: 2880
+New size: 2892
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 320
+CURSOR OFFSET: 2880
+SMALL COPY
+Cursor position: 2892
+
+
+Resizing file
+Old size: 2892
+New size: 2904
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 332
+CURSOR OFFSET: 2892
+SMALL COPY
+Cursor position: 2904
+
+
+Resizing file
+Old size: 2904
+New size: 2916
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 344
+CURSOR OFFSET: 2904
+SMALL COPY
+Cursor position: 2916
+
+
+Resizing file
+Old size: 2916
+New size: 2928
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 356
+CURSOR OFFSET: 2916
+SMALL COPY
+Cursor position: 2928
+
+
+Resizing file
+Old size: 2928
+New size: 2940
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 368
+CURSOR OFFSET: 2928
+SMALL COPY
+Cursor position: 2940
+
+
+Resizing file
+Old size: 2940
+New size: 2952
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 380
+CURSOR OFFSET: 2940
+SMALL COPY
+Cursor position: 2952
+
+
+Resizing file
+Old size: 2952
+New size: 2964
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 392
+CURSOR OFFSET: 2952
+SMALL COPY
+Cursor position: 2964
+
+
+Resizing file
+Old size: 2964
+New size: 2976
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 404
+CURSOR OFFSET: 2964
+SMALL COPY
+Cursor position: 2976
+
+
+Resizing file
+Old size: 2976
+New size: 2988
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 416
+CURSOR OFFSET: 2976
+SMALL COPY
+Cursor position: 2988
+
+
+Resizing file
+Old size: 2988
+New size: 3000
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 428
+CURSOR OFFSET: 2988
+SMALL COPY
+Cursor position: 3000
+
+
+Resizing file
+Old size: 3000
+New size: 3012
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 440
+CURSOR OFFSET: 3000
+SMALL COPY
+Cursor position: 3012
+
+
+Resizing file
+Old size: 3012
+New size: 3024
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 452
+CURSOR OFFSET: 3012
+SMALL COPY
+Cursor position: 3024
+
+
+Resizing file
+Old size: 3024
+New size: 3036
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 464
+CURSOR OFFSET: 3024
+SMALL COPY
+Cursor position: 3036
+
+
+Resizing file
+Old size: 3036
+New size: 3048
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 476
+CURSOR OFFSET: 3036
+SMALL COPY
+Cursor position: 3048
+
+
+Resizing file
+Old size: 3048
+New size: 3060
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 1
+
+
+Bytes remaining: 12
+Offset: 488
+CURSOR OFFSET: 3048
+SMALL COPY
+Cursor position: 3060
+
+
+Resizing file
+Old size: 3060
+New size: 3072
+
+old_nframe: 1
+new_nframe: 1
+New frame bid: 0
+INODE BID: 12
+GETTING USED BLOCKS
+Iterating through content arrays
+
+BID: 31
+Iterating through content arrays
+
+
+BITMAP[0]: 0xffffffff
+finding first free block
+
+
+BITMAP[128]: 0x1556010
+
+BID: 0
+Writing to frame bid: 13
+FINISHED GETTING USED BLOCKS
+Number of content blocks: 2
+
+
+Bytes remaining: 12
+Offset: 500
+BIG COPY
+Cursor position: 3072
+10: PASS

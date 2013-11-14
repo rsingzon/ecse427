@@ -1,12 +1,15 @@
 TASKS TO DO:
 
--Implement inode file size
--Implement seek from EOF
--Resize
+-BLOCK ID GETS MESSED UP WHEN THE PROGRAM MOVES TO THE SECOND CONTENT BLOCK
 
+ie. new_size: 512
 
+This is because there is only one content block allocated, but get_file_content assumes that full frames are allocated
 
+output2.txt:
+anomaly at line 7311
 
+-Allocating a free block breaks when 32 blocks are filled and it has to allocate a bitmap at the next index of the freemap array
 
 
 

@@ -1,0 +1,39 @@
+OS PA2 Tutorial Notes
+
+Check if a certain BID is free
+
+Say bid = 5
+
+Check a[bid/32] to find the index of the freemap
+
+a[bid/32] & (1<<(bid%32))
+
+1<<(32-i)
+
+Start from the lowest bit, and find the bid that you want
+
+
+
+
+
+
+Say bid = 5
+10000
+
+BITS SET
+bitmap[0]
+0x0000 00DF
+00000000 00000000 00000000 11011111
+
+Mask
+10000
+0x0000 0010
+
+
+Traversing blocks
+
+ICs:
+Previous block = -1
+Current block = 0
+Next block = 2
+
