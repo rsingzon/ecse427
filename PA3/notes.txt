@@ -1,0 +1,24 @@
+PA3 Notes:
+
+int socket(int domain, int type, int protocol);
+	domain:
+		PF_INET - protocol family
+
+		AF_INET - address family
+
+	type:
+		SOCK_STREAM - like a telephone call where one party contacts 		the other directly
+		SOCK_DGRAM - datagram, like sending notes in class, packets?
+
+	protocol:
+
+int connect(int socket, const struct sockaddr *address, socklen_t 		address_len);
+
+	socket - socket descriptor
+	sockaddr - points to a struct containing peer address
+	socklen_t - length of sockaddr struct
+
+Test 0:
+dfs_client.c:
+	send_sysinfo_request(cmd line arguments)
+	connect_to_nn(argv[1], )
