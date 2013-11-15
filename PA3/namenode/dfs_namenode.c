@@ -50,6 +50,8 @@ static void *heartbeatService()
  */
 int start(int argc, char **argv)
 {
+	printf("NAMENODE START\n");
+
 	assert(argc == 2);
 	int i = 0;
 	for (i = 0; i < MAX_DATANODE_NUM; i++) dnlist[i] = NULL;
@@ -57,12 +59,15 @@ int start(int argc, char **argv)
 
 	//TODO:create a thread to handle heartbeat service
 	//you can implement the related function in dfs_common.c and call it here
+	create_thread( heartbeatService(), NULL);
 
 	int server_socket = INVALID_SOCKET;
-	server_socket = create_tcp_socket();
 	//TODO: create a socket to listen the client requests and replace the value of server_socket with the socket's fd
+	int namenode_listen_port = atoi(argv[1]);
+	server_socket = create_server_tcp_socket(namenode_listen_port);
 
 	assert(server_socket != INVALID_SOCKET);
+	printf("hello\n");
 	return mainLoop(server_socket);
 }
 
@@ -71,7 +76,9 @@ int register_datanode(int heartbeat_socket)
 	for (;;)
 	{
 		int datanode_socket = -1;
+		//accept(heartbeat_socket, struct sockaddr *addr, sizeof(addr));
 		//TODO: accept connection from DataNodes and assign return value to datanode_socket;
+
 		assert(datanode_socket != INVALID_SOCKET);
 		dfs_cm_datanode_status_t datanode_status;
 		//TODO: receive datanode's status via datanode_socket

@@ -9,39 +9,11 @@ int connect_to_nn(char* address, int port)
 	assert(port >= 1 && port <= 65535);
 
 	int socket_descriptor;
-	struct sockaddr_in serv_addr;
-	in_addr_t address_int;
-	char *ip_string;
 
-	socket_descriptor = create_tcp_socket();
+	socket_descriptor = create_client_tcp_socket(address, port);
 	if(socket_descriptor < 0){
 		error("Error opening socket!\n");
-	}
-
-	//Allocate memory for the server address and set values
-	//bzero((char *) &serv_addr, sizeof(serv_addr));
-	serv_addr.sin_family = AF_INET;
-
-	//VERIFY THAT htons IS THE RIGHT METHOD
-	serv_addr.sin_port = htons(port);
-	//sin_addr is a struct that contains another variable for the address
-	
-	address_int = inet_addr(address);
-//	ip_string = inet_ntoa(*(struct in_addr*)address);
-//	printf("IP: %s\n", ip_string);
-
-	serv_addr.sin_addr.s_addr = address_int;
-
-	printf("SERVER ADDRESS VARIABLES:\n");
-	printf("\tPort: %d\n", port);
-	printf("\tsin_family: %d\n", serv_addr.sin_family);
-	printf("\tsin_port: %d\n", serv_addr.sin_port);
-	printf("\tsin_address: %d\n", serv_addr.sin_addr.s_addr);
-
-
-	printf("CONNECTING\n");
-	connect(socket_descriptor, &serv_addr, sizeof(serv_addr));
-	printf("CONNECTED\n");
+	}	
 
 	//TODO: create a socket and connect it to the server (address, port)
 	//assign return value to client_socket 
