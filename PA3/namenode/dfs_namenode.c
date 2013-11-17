@@ -5,7 +5,7 @@
 dfs_datanode_t* dnlist[MAX_DATANODE_NUM];
 dfs_cm_file_t* file_images[MAX_FILE_COUNT];
 int fileCount;
-int dncnt;
+int dncnt = 0;
 int safeMode = 1;
 
 int mainLoop(int server_socket)
@@ -96,8 +96,8 @@ int register_datanode(int heartbeat_socket)
 
 		receive_data(datanode_socket, &datanode_status, sizeof(dfs_cm_datanode_status_t));
 
-		printf("Datanode ID: %d\n", datanode_status.datanode_id);
-		printf("\tListen port: %d\n", ntohs(datanode_status.datanode_listen_port));
+//		printf("Datanode ID: %d\n", datanode_status.datanode_id);
+//		printf("\tListen port: %d\n", ntohs(datanode_status.datanode_listen_port));
 
 		if (datanode_status.datanode_id < MAX_DATANODE_NUM)
 		{
@@ -126,7 +126,11 @@ int register_datanode(int heartbeat_socket)
 				datanode.ip[i] = dn_ip_ascii[i];
 				i++;
 			}
-			printf("\tIP: %s\n\n", datanode.ip);
+//			printf("\tIP: %s\n\n", datanode.ip);
+
+			if(dnlist[datanode_status.datanode_id] == NULL){
+				dncnt++;
+			}
 
 			dnlist[datanode_status.datanode_id] = &datanode;
 
@@ -208,14 +212,17 @@ int get_file_location(int client_socket, dfs_cm_client_req_t request)
 
 void get_system_information(int client_socket, dfs_cm_client_req_t request)
 {
-	printf("FILLING RESPONSE\n");
 	assert(client_socket != INVALID_SOCKET);
 	
-	//TODO:fill the response and send back to the client
+	//TODO:fill the response and send back to the client	
+	dfs_system_status *system_status;
+	system_status = malloc(sizeof(dfs_system_status));
+	system_status->datanode_num = dncnt;
 
+	printf("Number of datanodes: %d\n\n", system_status->datanode_num);
 
-
-	dfs_system_status response;
+	send_data(client_socket, (void*)system_status, sizeof(dfs_system_status));
+	free(system_status);
 }
 
 int get_file_update_point(int client_socket, dfs_cm_client_req_t request)

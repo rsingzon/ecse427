@@ -84,11 +84,17 @@ dfs_system_status *get_system_info(int namenode_socket)
 	assert(namenode_socket != INVALID_SOCKET);
 	//TODO fill the result and send 
 	dfs_cm_client_req_t request;
+
+	request.req_type = 2;
 	send_data(namenode_socket, &request, sizeof(dfs_cm_client_req_t));
 	
 	//TODO: get the response
 	dfs_system_status *response; 
+	response = malloc(sizeof(dfs_system_status));
 
+	receive_data(namenode_socket, response, sizeof(dfs_system_status));
+
+	printf("Number of datanodes: %d\n", response->datanode_num);
 	return response;		
 }
 
