@@ -10,6 +10,7 @@ inline pthread_t * create_thread(void * (*entry_point)(void*), void *args)
 {
 	//TODO: create the thread and run it
 	pthread_t * thread;
+	thread = malloc(sizeof(pthread_t));
 
 	//pthread_create(thread,attr,start_routine,arg);
 	pthread_create(thread, NULL, entry_point, args);
@@ -48,8 +49,12 @@ int create_client_tcp_socket(char* address, int port)
 	serv_addr.sin_addr.s_addr = address_int;
 
 	//TODO: connect it to the destination port
-	printf("Client - connecting!\n");
-	connect(socket, &serv_addr, sizeof(serv_addr));
+	printf("Client: Attempting to connect\n");
+	if ( connect(socket, &serv_addr, sizeof(serv_addr)) < 0 ){
+		perror("Client failed to connect!\n");
+		exit(1);
+	}
+
 
 	return socket;
 }
@@ -69,18 +74,21 @@ int create_server_tcp_socket(int port)
 	name_addr.sin_family = AF_INET;
 	name_addr.sin_port = htons(port);
 	address_int = inet_addr("127.0.0.1");
+	if(address_int < 0){
+		printf("Error converting IP address\n");
+	}
 	name_addr.sin_addr.s_addr = address_int;
 
 	int isBound;
 	isBound = bind(socket, (struct sockaddr *) &name_addr, sizeof(name_addr));
 	if(isBound < 0) {
 		perror("Error on binding!\n");
-		exit(1);
+		//exit(1);
 	}
 
 	//TODO: listen on local port
 	listen(socket, 5);
-	printf("bound and listening!\n");
+	printf("Bound and listening!\n");
 
 	return socket;
 }
@@ -96,8 +104,7 @@ void send_data(int socket, void* data, int size)
 	assert(size >= 0);
 	if (socket == INVALID_SOCKET) return;
 	//TODO: send data through socket
-
-
+	send(socket, data, size, 0);
 }
 
 /**
@@ -112,4 +119,6 @@ void receive_data(int socket, void* data, int size)
 	assert(size >= 0);
 	if (socket == INVALID_SOCKET) return;
 	//TODO: fetch data via socket
+
+	recv(socket, data, size, 0);
 }

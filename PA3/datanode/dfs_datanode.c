@@ -9,17 +9,14 @@ int datanode_id = 0;
 int datanode_listen_port = 0;
 char *working_directory = NULL;
 
-///REARRANGING LOCATION OF IP ADDRESS
-char namenode_ip[32] = { 0 };
-
 // main service loop of datanode
 int mainLoop()
 {
 	//we don't consider concurrent operations in this assignment
 	int server_socket = -1;
-	
-	server_socket = create_tcp_socket();
+
 	//TODO: create a server socket and listen on it, you can implement dfs_common.c and call it here
+	server_socket = create_server_tcp_socket(datanode_listen_port);
 	assert (server_socket != INVALID_SOCKET);
 
 	// Listen to requests from the clients
@@ -28,8 +25,9 @@ int mainLoop()
 		sockaddr_in client_address;
 		int client_socket = -1;
 		//TODO: accept the client request
-
-		
+		struct sockaddr_in client_addr;
+		int client_address_length = sizeof(client_addr);
+		client_socket = accept(server_socket, (struct sockaddr*) &client_addr, &client_address_length);
 		
 		assert(client_socket != INVALID_SOCKET);
 		dfs_cli_dn_req_t request;
@@ -50,12 +48,25 @@ static void *heartbeat()
 	for (;;)
 	{
 		int heartbeat_socket = -1;
-		printf("thump thump. \t\tMr Datanode.\n");
-
 		//TODO: create a socket to the namenode, assign file descriptor id to heartbeat_socket
-		heartbeat_socket = create_client_tcp_socket(namenode_ip, datanode_listen_port);
+		heartbeat_socket = create_client_tcp_socket("127.0.0.1", 50030);
 		assert(heartbeat_socket != INVALID_SOCKET);
+
 		//send datanode_status to namenode
+		int data_size;
+
+		dfs_cm_datanode_status_t datanode_status;
+		datanode_status.datanode_id = datanode_id;
+		datanode_status.datanode_listen_port = htons(datanode_listen_port);
+
+		printf("Client: datanode ID: %d\n", datanode_status.datanode_id);
+		printf("Client: HOST FORMAT listen port: %d\n", datanode_listen_port);
+		printf("Client: NETWORK FORMAT listen port: %d\n\n", datanode_status.datanode_listen_port);
+
+		data_size = sizeof(dfs_cm_datanode_status_t);
+
+		send_data(heartbeat_socket, (void*) &datanode_status, data_size);
+
 		close(heartbeat_socket);
 		sleep(HEARTBEAT_INTERVAL);
 	}
@@ -68,6 +79,7 @@ static void *heartbeat()
  */
 int start(int argc, char **argv)
 {
+	char namenode_ip[32] = { 0 };
 	assert(argc == 5);
 	strcpy(namenode_ip, argv[2]);
 
@@ -75,12 +87,12 @@ int start(int argc, char **argv)
 	datanode_listen_port = atoi(argv[1]);
 	working_directory = (char *)malloc(sizeof(char) * strlen(argv[4]) + 1);
 	strcpy(working_directory, argv[4]);
+
 	//start one thread to report to the namenode periodically
 	//TODO: start a thread to report heartbeat
 	printf("DATANODE START\n");
-
-	pthread_t datanode_thread = create_thread( heartbeat(), *namenode_ip);
-
+	pthread_t heartbeat_thread;
+	heartbeat_thread = create_thread( heartbeat, NULL);
 
 	return mainLoop();
 }

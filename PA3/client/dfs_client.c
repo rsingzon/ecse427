@@ -8,16 +8,14 @@ int connect_to_nn(char* address, int port)
 	assert(address != NULL);
 	assert(port >= 1 && port <= 65535);
 
-	int socket_descriptor;
-
-	socket_descriptor = create_client_tcp_socket(address, port);
-	if(socket_descriptor < 0){
-		error("Error opening socket!\n");
-	}	
-
 	//TODO: create a socket and connect it to the server (address, port)
 	//assign return value to client_socket 
 	int client_socket = -1;
+
+	client_socket = create_client_tcp_socket(address, port);
+	if(client_socket < 0){
+		error("Error opening socket!\n");
+	}
 	
 	return client_socket;
 }
@@ -86,6 +84,7 @@ dfs_system_status *get_system_info(int namenode_socket)
 	assert(namenode_socket != INVALID_SOCKET);
 	//TODO fill the result and send 
 	dfs_cm_client_req_t request;
+	send_data(namenode_socket, &request, sizeof(dfs_cm_client_req_t));
 	
 	//TODO: get the response
 	dfs_system_status *response; 
@@ -118,6 +117,7 @@ int send_file_request(char **argv, char *filename, int op_type)
 dfs_system_status *send_sysinfo_request(char **argv)
 {
 	int namenode_socket = connect_to_nn(argv[1], atoi(argv[2]));
+	printf("Client: namenode socket: %d\n", namenode_socket);
 	if (namenode_socket < 0)
 	{
 		return NULL;

@@ -22,11 +22,15 @@ int mainLoop(int server_socket)
 		unsigned int client_address_length = sizeof(client_address);
 		int client_socket = -1;
 		//TODO: accept the connection from the client and assign the return value to client_socket
+		printf("Waiting for client\n\n");
+		client_socket = accept(server_socket, (struct sockaddr*) &client_address, &client_address_length);
 
 		assert(client_socket != INVALID_SOCKET);
 
 		dfs_cm_client_req_t request;
 		//TODO: receive requests from client and fill it in request
+		receive_data(client_socket, &request, sizeof(dfs_cm_client_req_t));
+
 
 		requests_dispatcher(client_socket, request);
 		close(client_socket);
@@ -59,7 +63,9 @@ int start(int argc, char **argv)
 
 	//TODO:create a thread to handle heartbeat service
 	//you can implement the related function in dfs_common.c and call it here
-	create_thread( heartbeatService(), NULL);
+	pthread_t heartbeat_thread;
+	heartbeat_thread = create_thread( heartbeatService, NULL);
+	printf("Thread created\n");
 
 	int server_socket = INVALID_SOCKET;
 	//TODO: create a socket to listen the client requests and replace the value of server_socket with the socket's fd
@@ -67,7 +73,7 @@ int start(int argc, char **argv)
 	server_socket = create_server_tcp_socket(namenode_listen_port);
 
 	assert(server_socket != INVALID_SOCKET);
-	printf("hello\n");
+	
 	return mainLoop(server_socket);
 }
 
@@ -76,18 +82,57 @@ int register_datanode(int heartbeat_socket)
 	for (;;)
 	{
 		int datanode_socket = -1;
-		//accept(heartbeat_socket, struct sockaddr *addr, sizeof(addr));
+
+		struct sockaddr_in client_addr;
+		int client_address_length = sizeof(client_addr);
+
+		datanode_socket = accept(heartbeat_socket, (struct sockaddr*) &client_addr, &client_address_length);
 		//TODO: accept connection from DataNodes and assign return value to datanode_socket;
 
 		assert(datanode_socket != INVALID_SOCKET);
 		dfs_cm_datanode_status_t datanode_status;
 		//TODO: receive datanode's status via datanode_socket
 
+
+		receive_data(datanode_socket, &datanode_status, sizeof(dfs_cm_datanode_status_t));
+
+		printf("Datanode ID: %d\n", datanode_status.datanode_id);
+		printf("\tListen port: %d\n", ntohs(datanode_status.datanode_listen_port));
+
 		if (datanode_status.datanode_id < MAX_DATANODE_NUM)
 		{
 			//TODO: fill dnlist
 			//principle: a datanode with id of n should be filled in dnlist[n - 1] (n is always larger than 0)
+
+			dfs_datanode_t datanode;
+			datanode.dn_id = datanode_status.datanode_id;
+			datanode.port = ntohs(datanode_status.datanode_listen_port);
+
+			struct sockaddr *dn_addr;
+			dn_addr = malloc(sizeof(sockaddr));
+			struct sockaddr_in dn_addr_in;
+			int addr_length = sizeof(*dn_addr);
+
+			if( getpeername(datanode_socket, dn_addr, &addr_length) < 0){
+				perror("Server: Could not get peer name!\n");
+			}
+
+			dn_addr_in = *(struct sockaddr_in*) dn_addr;
+			struct in_addr dn_ip = dn_addr_in.sin_addr;
+			char *dn_ip_ascii = inet_ntoa(dn_ip);
+
+			int i = 0;
+			while (dn_ip_ascii[i] != '\0'){
+				datanode.ip[i] = dn_ip_ascii[i];
+				i++;
+			}
+			printf("\tIP: %s\n\n", datanode.ip);
+
+			dnlist[datanode_status.datanode_id] = &datanode;
+
 			safeMode = 0;
+		} else{
+			printf("Datanode ID [%d] out of bounds\n",datanode_status.datanode_id);
 		}
 		close(datanode_socket);
 	}
@@ -121,7 +166,9 @@ int get_file_receivers(int client_socket, dfs_cm_client_req_t request)
 		if (file_image == end_file_image) return 1;
 		// Create the file entry
 		*file_image = (dfs_cm_file_t*)malloc(sizeof(dfs_cm_file_t));
-		memset(*file_image, 0, sizeof(*file_image));
+	   	//TA BUG
+	  //memset(*file_image, 0, sizeof(*file_image));
+		memset(*file_image, 0, sizeof(**file_image));
 		strcpy((*file_image)->filename, request.file_name);
 		(*file_image)->file_size = request.file_size;
 		(*file_image)->blocknum = 0;
@@ -161,8 +208,13 @@ int get_file_location(int client_socket, dfs_cm_client_req_t request)
 
 void get_system_information(int client_socket, dfs_cm_client_req_t request)
 {
+	printf("FILLING RESPONSE\n");
 	assert(client_socket != INVALID_SOCKET);
+	
 	//TODO:fill the response and send back to the client
+
+
+
 	dfs_system_status response;
 }
 
@@ -188,6 +240,7 @@ int get_file_update_point(int client_socket, dfs_cm_client_req_t request)
 int requests_dispatcher(int client_socket, dfs_cm_client_req_t request)
 {
 	//0 - read, 1 - write, 2 - query, 3 - modify
+	printf("***\nRequest type: %d\n", request.req_type);
 	switch (request.req_type)
 	{
 		case 0:
