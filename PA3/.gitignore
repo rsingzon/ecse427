@@ -10,3 +10,12 @@ build/*
 datanode/datanode
 dfs
 namenode/namenode
+
+d1/*
+d2/*
+
+local_file
+local_file_1
+local_file_large_1
+local_file_medium
+local_file_medium_1
