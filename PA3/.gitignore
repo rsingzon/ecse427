@@ -5,3 +5,8 @@
 
 *.exe
 *.out
+
+build/*
+datanode/datanode
+dfs
+namenode/namenode
