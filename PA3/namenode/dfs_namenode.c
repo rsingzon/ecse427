@@ -93,7 +93,6 @@ int register_datanode(int heartbeat_socket)
 		dfs_cm_datanode_status_t datanode_status;
 		//TODO: receive datanode's status via datanode_socket
 
-
 		receive_data(datanode_socket, &datanode_status, sizeof(dfs_cm_datanode_status_t));
 
 //		printf("Datanode ID: %d\n", datanode_status.datanode_id);
@@ -121,12 +120,9 @@ int register_datanode(int heartbeat_socket)
 			struct in_addr dn_ip = dn_addr_in.sin_addr;
 			char *dn_ip_ascii = inet_ntoa(dn_ip);
 
-			int i = 0;
-			while (dn_ip_ascii[i] != '\0'){
-				datanode.ip[i] = dn_ip_ascii[i];
-				i++;
-			}
-//			printf("\tIP: %s\n\n", datanode.ip);
+			strcpy(datanode.ip, dn_ip_ascii);
+
+	//		printf("\tIP: %s\n\n", datanode.ip);
 
 			if(dnlist[datanode_status.datanode_id] == NULL){
 				dncnt++;
@@ -186,9 +182,37 @@ int get_file_receivers(int client_socket, dfs_cm_client_req_t request)
 
 	//TODO:Assign data blocks to datanodes, round-robin style (see the Documents)
 
+	printf("Blocks to store: %d\n", block_count);
+
+	while(first_unassigned_block_index < block_count){
+		
+		next_data_node_index = next_data_node_index % MAX_DATANODE_NUM;
+		//Find a valid datanode
+		while(dnlist[next_data_node_index] == NULL){
+			next_data_node_index = (next_data_node_index + 1) % MAX_DATANODE_NUM;
+		}
+
+		//Allocate the datanode information
+		dfs_cm_block_t file_block;
+
+		file_block.dn_id = next_data_node_index;
+		file_block.block_id = first_unassigned_block_index;
+		strcpy(file_block.loc_ip, dnlist[next_data_node_index]->ip);
+		file_block.loc_port = dnlist[next_data_node_index]->port;
+		//memcpy(block.content, DATA GOES HERE);
+
+		(*file_image)->block_list[first_unassigned_block_index] = file_block;
+
+		first_unassigned_block_index++;
+		next_data_node_index++;
+	}
+
 	dfs_cm_file_res_t response;
 	memset(&response, 0, sizeof(response));
 	//TODO: fill the response and send it back to the client
+
+	response.query_result = **file_image;
+	send_data(client_socket, &response, sizeof(response));
 
 	return 0;
 }

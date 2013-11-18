@@ -46,17 +46,71 @@ int push_file(int namenode_socket, const char* local_path)
 	FILE* file = fopen(local_path, "rb");
 	assert(file != NULL);
 
+
 	// Create the push request
 	dfs_cm_client_req_t request;
 
 	//TODO:fill the fields in request and 
 	
+	strcpy(request.file_name, local_path);
+
+	//Get the offset of the file pointer when it is at the end of the file
+	fseek(file, 0, SEEK_END);
+	int size = ftell(file);
+	fseek(file, 0, SEEK_SET);
+	
+	request.file_size = size;
+	request.req_type = 1;
+
+	printf("\nPushing file [%s]: \n", local_path);
+	printf("\tFile name: %s\n", request.file_name);
+	printf("\tFile size: %d\n", request.file_size);
+
+	send_data(namenode_socket, &request, sizeof(dfs_cm_client_req_t));
+	
 	//TODO:Receive the response
-	dfs_cm_file_res_t response;
+	dfs_cm_file_res_t *response;
+	response = malloc(sizeof(*response));
+
+	receive_data(namenode_socket, response, sizeof(*response));
 
 	//TODO: Send blocks to datanodes one by one
+	dfs_cm_file_t block_info = *(dfs_cm_file_t*)response;
+	int blocks_to_send = block_info.blocknum;
+	printf("File name: %s\n", block_info.filename);
+	printf("File size: %d\n", block_info.file_size);
+	printf("Blocks to send: %d\n", blocks_to_send);
+
+	dfs_cli_dn_req_t datanode_request;
+	dfs_cm_block_t block_to_send;
+	int datanode_socket = 0;
+
+	//dfs_cm_block_t block_list[MAX_FILE_BLK_COUNT];
+
+	int count = 0;
+	while(count < blocks_to_send){
+
+		//Read data from file into the block
+		block_to_send = block_info.block_list[count];
+		fread( &(block_to_send.content), DFS_BLOCK_SIZE, 1, file);
+
+		char *dn_address = block_to_send.loc_ip;
+		int dn_port = block_to_send.loc_port;
+
+		printf("\nDN IP: %s\n", dn_address);
+		printf("DN Port: %d\n", dn_port);
+
+		datanode_socket = create_client_tcp_socket(dn_address, dn_port);
+     
+		datanode_request.op_type = 1;
+		datanode_request.block = block_to_send;
+
+		send_data(datanode_socket, &datanode_request, sizeof(datanode_request));
+		count++;
+	}
 
 	fclose(file);
+	free(response);
 	return 0;
 }
 

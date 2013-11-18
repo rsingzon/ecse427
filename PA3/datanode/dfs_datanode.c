@@ -22,16 +22,21 @@ int mainLoop()
 	// Listen to requests from the clients
 	for (;;)
 	{
-		sockaddr_in client_address;
+		struct sockaddr_in client_address;
+		int client_address_length = sizeof(client_address);
 		int client_socket = -1;
+
 		//TODO: accept the client request
-		struct sockaddr_in client_addr;
-		int client_address_length = sizeof(client_addr);
-		client_socket = accept(server_socket, (struct sockaddr*) &client_addr, &client_address_length);
-		
+		printf("Waiting for client\n\n");
+		client_socket = accept(server_socket, (struct sockaddr*) &client_address, &client_address_length);
+		printf("CLIENT ACCEPTED!\n");
+				
 		assert(client_socket != INVALID_SOCKET);
 		dfs_cli_dn_req_t request;
 		//TODO: receive data from client_socket, and fill it to request
+
+		receive_data(client_socket, &request, sizeof(request));
+
 		requests_dispatcher(client_socket, request);
 		close(client_socket);
 	}
@@ -59,9 +64,9 @@ static void *heartbeat()
 		datanode_status.datanode_id = datanode_id;
 		datanode_status.datanode_listen_port = htons(datanode_listen_port);
 
-		printf("Client: datanode ID: %d\n", datanode_status.datanode_id);
-		printf("Client: HOST FORMAT listen port: %d\n", datanode_listen_port);
-		printf("Client: NETWORK FORMAT listen port: %d\n\n", datanode_status.datanode_listen_port);
+//		printf("Client: datanode ID: %d\n", datanode_status.datanode_id);
+//		printf("Client: HOST FORMAT listen port: %d\n", datanode_listen_port);
+//		printf("Client: NETWORK FORMAT listen port: %d\n\n", datanode_status.datanode_listen_port);
 
 		data_size = sizeof(dfs_cm_datanode_status_t);
 
