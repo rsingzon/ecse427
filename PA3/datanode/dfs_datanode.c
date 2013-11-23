@@ -64,10 +64,6 @@ static void *heartbeat()
 		datanode_status.datanode_id = datanode_id;
 		datanode_status.datanode_listen_port = htons(datanode_listen_port);
 
-//		printf("Client: datanode ID: %d\n", datanode_status.datanode_id);
-//		printf("Client: HOST FORMAT listen port: %d\n", datanode_listen_port);
-//		printf("Client: NETWORK FORMAT listen port: %d\n\n", datanode_status.datanode_listen_port);
-
 		data_size = sizeof(dfs_cm_datanode_status_t);
 
 		send_data(heartbeat_socket, (void*) &datanode_status, data_size);
@@ -97,7 +93,8 @@ int start(int argc, char **argv)
 	//TODO: start a thread to report heartbeat
 	printf("DATANODE START\n");
 	pthread_t heartbeat_thread;
-	heartbeat_thread = create_thread( heartbeat, NULL);
+	pthread_t *thread_pointer = create_thread( heartbeat, NULL);
+	heartbeat_thread = *thread_pointer;
 
 	return mainLoop();
 }
@@ -109,6 +106,15 @@ int read_block(int client_socket, const dfs_cli_dn_req_t *request)
 	char buffer[DFS_BLOCK_SIZE];
 	ext_read_block(request->block.owner_name, request->block.block_id, (void *)buffer);
 	//TODO:response the client with the data
+
+	dfs_cm_block_t block_to_return;
+
+	strcpy(block_to_return.owner_name, request->block.owner_name);
+	block_to_return.dn_id = datanode_id;
+	block_to_return.block_id = request->block.block_id;
+	strcpy(block_to_return.content, buffer);
+
+	send_data(client_socket, &block_to_return, sizeof(block_to_return));
 	return 0;
 }
 

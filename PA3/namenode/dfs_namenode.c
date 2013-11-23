@@ -31,7 +31,20 @@ int mainLoop(int server_socket)
 		//TODO: receive requests from client and fill it in request
 		receive_data(client_socket, &request, sizeof(dfs_cm_client_req_t));
 
-
+		printf("CLIENT REQUEST RECEIVED\n");
+		if(request.req_type == 0){
+			printf("\tType: READ\n");	
+			printf("\tFile name: %s\n", request.file_name);
+		} else if(request.req_type == 1){
+			printf("\tType: WRITE");	
+			printf("\tFile name: %s\n", request.file_name);
+			printf("\tFile size: %d\n", request.file_size);
+		} else if(request.req_type == 2){
+			printf("\tType: QUERY\n");	
+		} else if(request.req_type == 3){
+			printf("\tType: MODIFY\n");	
+		}
+ 		
 		requests_dispatcher(client_socket, request);
 		close(client_socket);
 	}
@@ -64,7 +77,8 @@ int start(int argc, char **argv)
 	//TODO:create a thread to handle heartbeat service
 	//you can implement the related function in dfs_common.c and call it here
 	pthread_t heartbeat_thread;
-	heartbeat_thread = create_thread( heartbeatService, NULL);
+	pthread_t *thread_pointer = create_thread( heartbeatService, NULL);
+	heartbeat_thread = *thread_pointer;
 	printf("Thread created\n");
 
 	int server_socket = INVALID_SOCKET;
@@ -95,9 +109,6 @@ int register_datanode(int heartbeat_socket)
 
 		receive_data(datanode_socket, &datanode_status, sizeof(dfs_cm_datanode_status_t));
 
-//		printf("Datanode ID: %d\n", datanode_status.datanode_id);
-//		printf("\tListen port: %d\n", ntohs(datanode_status.datanode_listen_port));
-
 		if (datanode_status.datanode_id < MAX_DATANODE_NUM)
 		{
 			//TODO: fill dnlist
@@ -122,7 +133,6 @@ int register_datanode(int heartbeat_socket)
 
 			strcpy(datanode.ip, dn_ip_ascii);
 
-	//		printf("\tIP: %s\n\n", datanode.ip);
 
 			if(dnlist[datanode_status.datanode_id] == NULL){
 				dncnt++;
@@ -149,7 +159,10 @@ int get_file_receivers(int client_socket, dfs_cm_client_req_t request)
 	// Try to find if there is already an entry for that file
 	while (file_image != end_file_image)
 	{
-		if (*file_image != NULL && strcmp((*file_image)->filename, request.file_name) == 0) break;
+		if (*file_image != NULL && strcmp((*file_image)->filename, request.file_name) == 0){
+			printf("FILE ALREADY EXISTS\n");
+			break;	
+		} 
 		++file_image;
 	}
 
@@ -165,6 +178,7 @@ int get_file_receivers(int client_socket, dfs_cm_client_req_t request)
 
 		if (file_image == end_file_image) return 1;
 		// Create the file entry
+		printf("CREATING NEW FILE\n");
 		*file_image = (dfs_cm_file_t*)malloc(sizeof(dfs_cm_file_t));
 	   	//TA BUG
 	  //memset(*file_image, 0, sizeof(*file_image));
@@ -177,14 +191,16 @@ int get_file_receivers(int client_socket, dfs_cm_client_req_t request)
 	int block_count = (request.file_size + (DFS_BLOCK_SIZE - 1)) / DFS_BLOCK_SIZE;
 	
 	int first_unassigned_block_index = (*file_image)->blocknum;
+	int numIterations = block_count + first_unassigned_block_index;
 	(*file_image)->blocknum = block_count;
 	int next_data_node_index = 0;
 
 	//TODO:Assign data blocks to datanodes, round-robin style (see the Documents)
-
-	printf("Blocks to store: %d\n", block_count);
-
-	while(first_unassigned_block_index < block_count){
+	printf("\nBlocks to store: %d\n", block_count);
+	printf("Block num: %d\n", (*file_image)->blocknum);
+	printf("Unassigned: %d\n", first_unassigned_block_index);
+	printf("Iterations needed: %d\n", numIterations);
+	while(first_unassigned_block_index < numIterations){
 		
 		next_data_node_index = next_data_node_index % MAX_DATANODE_NUM;
 		//Find a valid datanode
@@ -195,11 +211,15 @@ int get_file_receivers(int client_socket, dfs_cm_client_req_t request)
 		//Allocate the datanode information
 		dfs_cm_block_t file_block;
 
+		strcpy(file_block.owner_name, request.file_name);
 		file_block.dn_id = next_data_node_index;
 		file_block.block_id = first_unassigned_block_index;
 		strcpy(file_block.loc_ip, dnlist[next_data_node_index]->ip);
 		file_block.loc_port = dnlist[next_data_node_index]->port;
-		//memcpy(block.content, DATA GOES HERE);
+		printf("\tDatanode ID: %d\n", file_block.dn_id);
+		printf("\tBlock ID:%d\n", file_block.block_id);
+		printf("\tIP: %s\n", file_block.loc_ip);
+		printf("\tPort: %d\n", file_block.loc_port);
 
 		(*file_image)->block_list[first_unassigned_block_index] = file_block;
 
@@ -207,29 +227,56 @@ int get_file_receivers(int client_socket, dfs_cm_client_req_t request)
 		next_data_node_index++;
 	}
 
-	dfs_cm_file_res_t response;
-	memset(&response, 0, sizeof(response));
+	//dfs_cm_file_res_t response;
+	//memset(&response, 0, sizeof(response));
 	//TODO: fill the response and send it back to the client
 
-	response.query_result = **file_image;
-	send_data(client_socket, &response, sizeof(response));
-
+	//response.query_result = **file_image;
+	send_data(client_socket, *file_image, sizeof(**file_image));
+	printf("Response to client sent!\n");
+	//free(response);
 	return 0;
 }
 
 int get_file_location(int client_socket, dfs_cm_client_req_t request)
 {
 	int i = 0;
+
+	// Loop searches for the file name within the list of files
 	for (i = 0; i < MAX_FILE_COUNT; ++i)
 	{
 		dfs_cm_file_t* file_image = file_images[i];
 		if (file_image == NULL) continue;
 		if (strcmp(file_image->filename, request.file_name) != 0) continue;
+		
+		//Once a matching name has been found, this clode block is executed
+
+		//Fill the response and send it back to the client
 		dfs_cm_file_res_t response;
-		//TODO: fill the response and send it back to the client
+//		dfs_cm_file_t query;
+
+//		strcpy(query.filename, request.file_name);
+//		query.file_size = file_image->file_size;
+
+	//	dfs_cm_file_t
+	//	char filename[256];
+//		dfs_cm_block_t block_list[MAX_FILE_BLK_COUNT];
+//		int file_size;
+//		int blocknum;
+
+		response.query_result = *file_image;
+		
+		send_data(client_socket, &response, sizeof(response));
+		printf("FILE FOUND\n");
+		printf("\tFilename: %s\n", file_image->filename);
+		printf("\tFile size: %d\n", file_image->file_size);
+		printf("\tNumber of blocks: %d\n", file_image->blocknum);
+
+		printf("Read response sent to client!\n");
 
 		return 0;
 	}
+
 	//FILE NOT FOUND
 	return 1;
 }
@@ -271,7 +318,7 @@ int get_file_update_point(int client_socket, dfs_cm_client_req_t request)
 int requests_dispatcher(int client_socket, dfs_cm_client_req_t request)
 {
 	//0 - read, 1 - write, 2 - query, 3 - modify
-	printf("***\nRequest type: %d\n", request.req_type);
+	printf("*******\nRequest type: %d\n", request.req_type);
 	switch (request.req_type)
 	{
 		case 0:

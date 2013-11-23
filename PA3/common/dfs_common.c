@@ -9,7 +9,7 @@
 inline pthread_t * create_thread(void * (*entry_point)(void*), void *args)
 {
 	//TODO: create the thread and run it
-	pthread_t * thread;
+	pthread_t *thread;
 	thread = malloc(sizeof(pthread_t));
 
 	//pthread_create(thread,attr,start_routine,arg);
@@ -39,23 +39,24 @@ int create_client_tcp_socket(char* address, int port)
 	if (socket == INVALID_SOCKET) return 1;
 
 	//Define variables
-	struct sockaddr_in serv_addr;
+	struct sockaddr_in *serv_addr;
+	serv_addr = malloc(sizeof(sockaddr_in));
 	in_addr_t address_int;
 	char *ip_string;
 
-	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_port = htons(port);
+	serv_addr->sin_family = AF_INET;
+	serv_addr->sin_port = htons(port);
 	address_int = inet_addr(address);
-	serv_addr.sin_addr.s_addr = address_int;
+	serv_addr->sin_addr.s_addr = address_int;
 
 	//TODO: connect it to the destination port
-	printf("Client: Attempting to connect\n");
-	if ( connect(socket, &serv_addr, sizeof(serv_addr)) < 0 ){
+	//printf("Client: Attempting to connect\n");
+	if ( connect(socket, (const struct sockaddr *)serv_addr, sizeof(*serv_addr)) < 0 ){
 		perror("Client failed to connect!\n");
 		exit(1);
 	}
 
-
+	free(serv_addr);
 	return socket;
 }
 
@@ -104,7 +105,9 @@ void send_data(int socket, void* data, int size)
 	assert(size >= 0);
 	if (socket == INVALID_SOCKET) return;
 	//TODO: send data through socket
-	send(socket, data, size, 0);
+	if( send(socket, data, size, 0) < 0 ){
+		perror("Failed to send data!\n");
+	}
 }
 
 /**
@@ -120,5 +123,7 @@ void receive_data(int socket, void* data, int size)
 	if (socket == INVALID_SOCKET) return;
 	//TODO: fetch data via socket
 
-	recv(socket, data, size, 0);
+	if( recv(socket, data, size, 0) < 0 ){
+		perror("Failed to receive data!\n");
+	}
 }
