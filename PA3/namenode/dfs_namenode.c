@@ -266,11 +266,8 @@ int get_file_receivers(int client_socket, dfs_cm_client_req_t request)
 		next_data_node_index++;
 	}
 
-	//dfs_cm_file_res_t response;
-	//memset(&response, 0, sizeof(response));
 	//TODO: fill the response and send it back to the client
 
-	//response.query_result = **file_image;
 	send_data(client_socket, *file_image, sizeof(**file_image));
 	printf("Response to client sent!\n");
 	//free(response);
@@ -292,7 +289,10 @@ int get_file_location(int client_socket, dfs_cm_client_req_t request)
 
 		//Fill the response and send it back to the client
 		dfs_cm_file_res_t *response;
-		//response = malloc(sizeof(dfs_cm_file_res_t));
+		response = malloc(sizeof(dfs_cm_file_res_t));
+
+		memset(response, 0, sizeof(dfs_cm_file_res_t));
+
 //		dfs_cm_file_t query;
 
 //		strcpy(query.filename, request.file_name);
@@ -304,16 +304,17 @@ int get_file_location(int client_socket, dfs_cm_client_req_t request)
 //		int file_size;
 //		int blocknum;
 
-		response.query_result = *file_image;
-		
-		send_data(client_socket, &response, sizeof(response));
+		response->query_result = *file_image;
+
 		printf("FILE FOUND\n");
-		printf("\tFilename: %s\n", file_image->filename);
-		printf("\tFile size: %d\n", file_image->file_size);
-		printf("\tNumber of blocks: %d\n", file_image->blocknum);
+		printf("\tFilename: %s\n", response->query_result.filename);
+		printf("\tFile size: %d\n", response->query_result.file_size);
+		printf("\tNumber of blocks: %d\n", response->query_result.blocknum);
+
+		send_data(client_socket, response, sizeof(*response));
 
 		printf("Read response sent to client!\n");
-
+		free(response);
 		return 0;
 	}
 

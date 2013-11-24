@@ -70,6 +70,7 @@ int push_file(int namenode_socket, const char* local_path)
 	//TODO:Receive the response
 	dfs_cm_file_res_t *response;
 	response = malloc(sizeof(*response));
+	memset(response, 0, sizeof(dfs_cm_file_res_t));
 	receive_data(namenode_socket, response, sizeof(*response));
 
 	//TODO: Send blocks to datanodes one by one
@@ -129,10 +130,11 @@ int pull_file(int namenode_socket, const char *filename)
 
 	//TODO: Get the response
 	dfs_cm_file_res_t *response;
-	response = malloc(sizeof(dfs_cm_file_t));
+	response = malloc(sizeof(dfs_cm_file_res_t));
+	memset(response, 0, sizeof(dfs_cm_file_res_t));
 	dfs_cm_file_t file_info;
 	receive_data(namenode_socket, response, sizeof(*response));
-	file_info = *(dfs_cm_file_t*)response;
+	file_info = response->query_result;
 
 	printf("Namenode response:\n\tFile name: %s\n", file_info.filename);
 	printf("\tFile size: %d\n", file_info.file_size);

@@ -105,8 +105,19 @@ void send_data(int socket, void* data, int size)
 	assert(size >= 0);
 	if (socket == INVALID_SOCKET) return;
 	//TODO: send data through socket
-	if( send(socket, data, size, 0) < 0 ){
-		perror("Failed to send data!\n");
+
+	int bytes_sent = 0;
+	int num_bytes;
+
+	while( bytes_sent < size ){
+		num_bytes = send(socket, data, size, 0);
+			
+		if( num_bytes < 0 ){
+			perror("Failed to send data!\n");
+		} else {
+			bytes_sent += num_bytes;
+			printf("Bytes sent: %d\tTotal: %d\n", num_bytes, bytes_sent);
+		}
 	}
 }
 
@@ -123,7 +134,18 @@ void receive_data(int socket, void* data, int size)
 	if (socket == INVALID_SOCKET) return;
 	//TODO: fetch data via socket
 
-	if( recv(socket, data, size, 0) < 0 ){
-		perror("Failed to receive data!\n");
+	int bytes_received = 0;
+	int num_bytes;
+
+	while( bytes_received < size ){
+		num_bytes = recv(socket, data, size, 0);
+
+		if( num_bytes < 0 ){
+			perror("Failed to receive data!\n");
+		} else {
+			bytes_received += num_bytes;
+			printf("Bytes received: %d\tTotal: %d\n", num_bytes, bytes_received);
+		}
+
 	}
 }
