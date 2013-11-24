@@ -1,0 +1,69 @@
+Pushing file [local_file]: 
+	File name: local_file
+	File size: 1024
+File name: local_file
+File size: 1024
+Blocks to send: 1
+Content to send: 4636146847129424889974070925852418352159881926424313730052750913748055153275010661265260755946243360878215928906322070245932776002319150644667219516732527795327758683840526249390093447216968635713019061806747966402145851826419711749840646432284519096400241233529435699255485156258818944087550615284122890305022004810220995168886511700732454856258472691327215067159144380967615672863196939647552496946144025505001312126010767938743379873553055306821422600313297744624189606166940003465518859824406816999705601621177828926808251154974864526611748652746327374401998385959622917782156700639009491421936198382070407209562492633777891422553780943873721180645935916088235725010319883911278791285803848420123154254547965746084594098852874301936501399085616265676672189519934585836037518136815503911084979658353159830644355827338437126001039474557544171975638591405036231398746720339626119961221724560999996568513476309417539901380579760328399648498339012905353310488530360326375200333823379802850623959103742485618092340420627899307
+
+DN IP: 127.0.0.1
+DN Port: 50060
+Client: Attempting to connect
+TEST CASE 1:FAILED
+*********************************************************************
+singzon@ubuntu:~/Development/ecse427/PA3$ valgrind build/datanode 50060 127.0.0.1 1 d1/
+==9897== Memcheck, a memory error detector
+==9897== Copyright (C) 2002-2011, and GNU GPL'd, by Julian Seward et al.
+==9897== Using Valgrind-3.7.0 and LibVEX; rerun with -h for copyright info
+==9897== Command: build/datanode 50060 127.0.0.1 1 d1/
+==9897== 
+DATANODE START
+Bound and listening!
+Waiting for client
+
+Client: Attempting to connect
+Client: Attempting to connect
+Client: Attempting to connect
+CLIENT ACCEPTED!
+d1/`8���_blk_0
+==9897== Invalid read of size 4
+==9897==    at 0x50BEC04: fwrite (iofwrite.c:43)
+==9897==    by 0x400F98: ext_write_block (ext.c:45)
+==9897==    by 0x4013C1: create_block (dfs_datanode.c:117)
+==9897==    by 0x4013FA: requests_dispatcher (dfs_datanode.c:129)
+==9897==    by 0x4010DA: mainLoop (dfs_datanode.c:40)
+==9897==    by 0x4012C8: start (dfs_datanode.c:102)
+==9897==    by 0x401447: main (dfs_datanode.c:142)
+==9897==  Address 0x0 is not stack'd, malloc'd or (recently) free'd
+==9897== 
+==9897== 
+==9897== Process terminating with default action of signal 11 (SIGSEGV)
+==9897==  Access not within mapped region at address 0x0
+==9897==    at 0x50BEC04: fwrite (iofwrite.c:43)
+==9897==    by 0x400F98: ext_write_block (ext.c:45)
+==9897==    by 0x4013C1: create_block (dfs_datanode.c:117)
+==9897==    by 0x4013FA: requests_dispatcher (dfs_datanode.c:129)
+==9897==    by 0x4010DA: mainLoop (dfs_datanode.c:40)
+==9897==    by 0x4012C8: start (dfs_datanode.c:102)
+==9897==    by 0x401447: main (dfs_datanode.c:142)
+==9897==  If you believe this happened as a result of a stack
+==9897==  overflow in your program's main thread (unlikely but
+==9897==  possible), you can try to increase the size of the
+==9897==  main thread stack using the --main-stacksize= flag.
+==9897==  The main thread stack size used in this run was 8388608.
+==9897== 
+==9897== HEAP SUMMARY:
+==9897==     in use at exit: 301 bytes in 4 blocks
+==9897==   total heap usage: 5 allocs, 1 frees, 869 bytes allocated
+==9897== 
+==9897== LEAK SUMMARY:
+==9897==    definitely lost: 0 bytes in 0 blocks
+==9897==    indirectly lost: 0 bytes in 0 blocks
+==9897==      possibly lost: 272 bytes in 1 blocks
+==9897==    still reachable: 29 bytes in 3 blocks
+==9897==         suppressed: 0 bytes in 0 blocks
+==9897== Rerun with --leak-check=full to see details of leaked memory
+==9897== 
+==9897== For counts of detected and suppressed errors, rerun with: -v
+==9897== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 2 from 2)
+Killed

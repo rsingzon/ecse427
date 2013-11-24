@@ -100,8 +100,14 @@ int register_datanode(int heartbeat_socket)
 		struct sockaddr_in client_addr;
 		int client_address_length = sizeof(client_addr);
 
-		datanode_socket = accept(heartbeat_socket, (struct sockaddr*) &client_addr, &client_address_length);
 		//TODO: accept connection from DataNodes and assign return value to datanode_socket;
+		int result = accept(heartbeat_socket, (struct sockaddr*) &client_addr, &client_address_length);
+
+		if(result < 0){
+			perror("Datanode could not be registered!\n");
+		} else {
+			datanode_socket = result;
+		}	
 
 		assert(datanode_socket != INVALID_SOCKET);
 		dfs_cm_datanode_status_t datanode_status;
@@ -111,12 +117,30 @@ int register_datanode(int heartbeat_socket)
 
 		if (datanode_status.datanode_id < MAX_DATANODE_NUM)
 		{
+
 			//TODO: fill dnlist
 			//principle: a datanode with id of n should be filled in dnlist[n - 1] (n is always larger than 0)
 
-			dfs_datanode_t datanode;
-			datanode.dn_id = datanode_status.datanode_id;
-			datanode.port = ntohs(datanode_status.datanode_listen_port);
+			dfs_datanode_t *datanode;	
+			int dnlist_index = datanode_status.datanode_id - 1;
+
+			//If there does not exist a datanode at the specified index, allocate 
+			//space in memory for it
+			if(dnlist[dnlist_index] == NULL){
+				
+				//Increment the number of datanodes that exist
+				dncnt++;
+				datanode = malloc(sizeof(dfs_datanode_t));
+				memset(datanode, 0, sizeof(dfs_datanode_t));
+				dnlist[dnlist_index] = datanode;
+			}
+
+			//Otherwise, set the working datanode to the correct address in the array
+			datanode = dnlist[dnlist_index];
+			datanode->dn_id = datanode_status.datanode_id;
+			datanode->port = ntohs(datanode_status.datanode_listen_port);
+
+			//Index of datanode list corresponds to the datanode_id-1			
 
 			struct sockaddr *dn_addr;
 			dn_addr = malloc(sizeof(sockaddr));
@@ -131,20 +155,31 @@ int register_datanode(int heartbeat_socket)
 			struct in_addr dn_ip = dn_addr_in.sin_addr;
 			char *dn_ip_ascii = inet_ntoa(dn_ip);
 
-			strcpy(datanode.ip, dn_ip_ascii);
-
-
-			if(dnlist[datanode_status.datanode_id] == NULL){
-				dncnt++;
-			}
-
-			dnlist[datanode_status.datanode_id] = &datanode;
+			strcpy(datanode->ip, dn_ip_ascii);
 
 			safeMode = 0;
+			free(dn_addr);
+
+/*			//Print datanode information
+			printf("\n\nDATANODE INFORMATION: \n");
+			count = 0;
+			while(count < MAX_DATANODE_NUM){
+				if(dnlist[count] != NULL){
+					dfs_datanode_t dn;
+					dn = *(dnlist[count]);
+					printf("Index %d\n", count);
+					printf("\tDN ID: %d\n", dn.dn_id);
+					printf("\tIP: %s\n", dn.ip);
+					printf("\tPORT: %d\n\n", dn.port);
+				}
+				count++;
+			}
+*/
 		} else{
 			printf("Datanode ID [%d] out of bounds\n",datanode_status.datanode_id);
 		}
-		close(datanode_socket);
+		
+		close(datanode_socket);	
 	}
 	return 0;
 }
@@ -201,18 +236,22 @@ int get_file_receivers(int client_socket, dfs_cm_client_req_t request)
 	printf("Unassigned: %d\n", first_unassigned_block_index);
 	printf("Iterations needed: %d\n", numIterations);
 	while(first_unassigned_block_index < numIterations){
-		
+		printf("dnlist index: %d\n", next_data_node_index);
 		next_data_node_index = next_data_node_index % MAX_DATANODE_NUM;
 		//Find a valid datanode
 		while(dnlist[next_data_node_index] == NULL){
+			printf("Incrementing dnlist index\n");
 			next_data_node_index = (next_data_node_index + 1) % MAX_DATANODE_NUM;
 		}
 
 		//Allocate the datanode information
+		printf("dnlist index to use: %d\n", next_data_node_index);
 		dfs_cm_block_t file_block;
 
 		strcpy(file_block.owner_name, request.file_name);
-		file_block.dn_id = next_data_node_index;
+		
+		//The indices of the datanode list correspond to their id-1
+		file_block.dn_id = next_data_node_index + 1;
 		file_block.block_id = first_unassigned_block_index;
 		strcpy(file_block.loc_ip, dnlist[next_data_node_index]->ip);
 		file_block.loc_port = dnlist[next_data_node_index]->port;
@@ -252,7 +291,8 @@ int get_file_location(int client_socket, dfs_cm_client_req_t request)
 		//Once a matching name has been found, this clode block is executed
 
 		//Fill the response and send it back to the client
-		dfs_cm_file_res_t response;
+		dfs_cm_file_res_t *response;
+		//response = malloc(sizeof(dfs_cm_file_res_t));
 //		dfs_cm_file_t query;
 
 //		strcpy(query.filename, request.file_name);
@@ -288,6 +328,7 @@ void get_system_information(int client_socket, dfs_cm_client_req_t request)
 	//TODO:fill the response and send back to the client	
 	dfs_system_status *system_status;
 	system_status = malloc(sizeof(dfs_system_status));
+	memset(system_status, 0, sizeof(dfs_system_status));
 	system_status->datanode_num = dncnt;
 
 	printf("Number of datanodes: %d\n\n", system_status->datanode_num);
