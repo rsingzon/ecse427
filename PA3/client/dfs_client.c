@@ -69,46 +69,49 @@ int push_file(int namenode_socket, const char* local_path)
 	
 	//TODO:Receive the response
 	dfs_cm_file_res_t *response;
-	response = malloc(sizeof(*response));
-	memset(response, 0, sizeof(dfs_cm_file_res_t));
-	receive_data(namenode_socket, response, sizeof(*response));
+	response = malloc(sizeof(dfs_cm_client_req_t));
+
+	receive_data(namenode_socket, response, sizeof(dfs_cm_file_res_t));
 
 	//TODO: Send blocks to datanodes one by one
-	dfs_cm_file_t block_info = *(dfs_cm_file_t*)response;
+	dfs_cm_file_t block_info = response->query_result;
 	int blocks_to_send = block_info.blocknum;
 	printf("Namenode response:\n\tFile name: %s\n", block_info.filename);
 	printf("\tFile size: %d\n", block_info.file_size);
 	printf("\tBlocks to send: %d\n", blocks_to_send);
 
 	dfs_cli_dn_req_t datanode_request;
-	dfs_cm_block_t block_to_send;
+	dfs_cm_block_t *block_to_send = malloc(sizeof(dfs_cm_block_t));
 	int datanode_socket = 0;
-
-	//dfs_cm_block_t block_list[MAX_FILE_BLK_COUNT];
-
 	int count = 0;
+
 	while(count < blocks_to_send){
 
-		//Read data from file into the block
-		block_to_send = block_info.block_list[count];
-		fread( &(block_to_send.content), DFS_BLOCK_SIZE, 1, file);
+		//Initialize block
+		
 
-		char *dn_address = block_to_send.loc_ip;
-		int dn_port = block_to_send.loc_port;
+		//Read data from file into the block
+		block_to_send = &(block_info.block_list[count]);
+		fread( block_to_send->content, DFS_BLOCK_SIZE, 1, file);
+
+		char *dn_address = block_to_send->loc_ip;
+		int dn_port = block_to_send->loc_port;
 
 		printf("\nDN IP: %s\n", dn_address);
 		printf("DN Port: %d\n", dn_port);
-		printf("Content: %s\n", block_to_send.content);
+		printf("Content: %s\n", block_to_send->content);
 
 		datanode_socket = create_client_tcp_socket(dn_address, dn_port);
      
 		datanode_request.op_type = 1;
-		datanode_request.block = block_to_send;
+		datanode_request.block = *block_to_send;
 
 		send_data(datanode_socket, &datanode_request, sizeof(datanode_request));
 		count++;
+	
 	}
 
+	free(block_to_send);
 	fclose(file);
 	free(response);
 	return 0;

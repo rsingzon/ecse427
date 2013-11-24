@@ -236,7 +236,6 @@ int get_file_receivers(int client_socket, dfs_cm_client_req_t request)
 	printf("Unassigned: %d\n", first_unassigned_block_index);
 	printf("Iterations needed: %d\n", numIterations);
 	while(first_unassigned_block_index < numIterations){
-		printf("dnlist index: %d\n", next_data_node_index);
 		next_data_node_index = next_data_node_index % MAX_DATANODE_NUM;
 		//Find a valid datanode
 		while(dnlist[next_data_node_index] == NULL){
@@ -245,7 +244,6 @@ int get_file_receivers(int client_socket, dfs_cm_client_req_t request)
 		}
 
 		//Allocate the datanode information
-		printf("dnlist index to use: %d\n", next_data_node_index);
 		dfs_cm_block_t file_block;
 
 		strcpy(file_block.owner_name, request.file_name);
@@ -267,10 +265,18 @@ int get_file_receivers(int client_socket, dfs_cm_client_req_t request)
 	}
 
 	//TODO: fill the response and send it back to the client
+	dfs_cm_file_res_t *response;
+	response = malloc(sizeof(dfs_cm_file_res_t));
 
-	send_data(client_socket, *file_image, sizeof(**file_image));
+	response->query_result = **file_image;
+
+	printf("File name: %s\n", response->query_result.filename);
+	printf("File size: %d\n", response->query_result.file_size);
+	printf("Blocknum: %d\n", response->query_result.blocknum);
+
+	send_data(client_socket, response, sizeof(dfs_cm_file_res_t));
 	printf("Response to client sent!\n");
-	//free(response);
+	free(response);
 	return 0;
 }
 
