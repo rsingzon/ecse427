@@ -303,33 +303,19 @@ int get_file_location(int client_socket, dfs_cm_client_req_t request)
 		//Once a matching name has been found, this clode block is executed
 
 		//Fill the response and send it back to the client
-		dfs_cm_file_res_t *response;
-		response = malloc(sizeof(dfs_cm_file_res_t));
+		dfs_cm_file_res_t response;
+		memset(&response, 0, sizeof(response));
 
-		memset(response, 0, sizeof(dfs_cm_file_res_t));
-
-//		dfs_cm_file_t query;
-
-//		strcpy(query.filename, request.file_name);
-//		query.file_size = file_image->file_size;
-
-	//	dfs_cm_file_t
-	//	char filename[256];
-//		dfs_cm_block_t block_list[MAX_FILE_BLK_COUNT];
-//		int file_size;
-//		int blocknum;
-
-		response->query_result = *file_image;
+		response.query_result = *file_image;
 
 		printf("FILE FOUND\n");
-		printf("\tFilename: %s\n", response->query_result.filename);
-		printf("\tFile size: %d\n", response->query_result.file_size);
-		printf("\tNumber of blocks: %d\n", response->query_result.blocknum);
+		printf("\tFilename: %s\n", response.query_result.filename);
+		printf("\tFile size: %d\n", response.query_result.file_size);
+		printf("\tNumber of blocks: %d\n", response.query_result.blocknum);
 
-		send_data(client_socket, response, sizeof(*response));
+		send_data(client_socket, &response, sizeof(response));
 
 		printf("Read response sent to client!\n");
-		free(response);
 		return 0;
 	}
 

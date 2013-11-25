@@ -139,59 +139,79 @@ int pull_file(int namenode_socket, const char *filename)
 
 	send_data(namenode_socket, &request, sizeof(dfs_cm_client_req_t));
 
-	//TODO: Get the response
-	dfs_cm_file_res_t *response;
-	response = malloc(sizeof(dfs_cm_file_res_t));
-	memset(response, 0, sizeof(dfs_cm_file_res_t));
+	//Allocate space for the response and receive it
+	dfs_cm_file_res_t response;
+	memset(&response, 0, sizeof(response));
+	receive_data(namenode_socket, &response, sizeof(response));
+	
 	dfs_cm_file_t file_info;
-	receive_data(namenode_socket, response, sizeof(*response));
-	file_info = response->query_result;
+	memset(&file_info, 0, sizeof(file_info));
+	file_info = response.query_result;
 
 	printf("Namenode response:\n\tFile name: %s\n", file_info.filename);
 	printf("\tFile size: %d\n", file_info.file_size);
-	printf("\tBlocks to send: %d\n", file_info.blocknum);
+	printf("\tNumber of blocks: %d\n", file_info.blocknum);
 
 	//TODO: Receive blocks from datanodes one by one
 	int num_blocks = file_info.blocknum;
-	dfs_cm_block_t block_list[num_blocks];
 	int count = 0;
-	int datanode_socket = 0;
-	dfs_cli_dn_req_t datanode_request;
+
+	//Allocate space for all the blocks for a particular file
+	dfs_cm_block_t block_list[num_blocks];
 
 	while (count < num_blocks){
-		// Receive a block from a datanode
-		dfs_cm_block_t block_to_receive;
-		block_to_receive = file_info.block_list[count];
-		char *dn_address = block_to_receive.loc_ip;
-		int dn_port = block_to_receive.loc_port;
+		//Obtain the block information from the namenode
+		dfs_cm_block_t file_block;
+		memset(&file_block, 0, sizeof(file_block));
+		
+		file_block = file_info.block_list[count];
+		printf("\nDN IP: %s\n", file_block.loc_ip);
+		printf("DN Port: %d\n", file_block.loc_port);
 
-		printf("\nDN IP: %s\n", dn_address);
-		printf("DN Port: %d\n", dn_port);
-		printf("Content: %s\n", block_to_receive.content);
-
-		datanode_socket = create_client_tcp_socket(dn_address, dn_port);
+		//Allocate space for a datanode request and fill it
+		dfs_cli_dn_req_t datanode_request;
+		memset(&datanode_request, 0, sizeof(datanode_request));
 
 		datanode_request.op_type = 0;
-		datanode_request.block = block_to_receive;
+		datanode_request.block = file_block;
 
+		//Create a socket to communicate with the datanode
+		int datanode_socket = 0;
+		datanode_socket = create_client_tcp_socket(file_block.loc_ip, file_block.loc_port);
+
+		//Send request for a block to the datanode
 		send_data(datanode_socket, &datanode_request, sizeof(datanode_request));
 
-		receive_data(datanode_socket, &block_to_receive, sizeof(block_to_receive));	
-		block_list[count] = block_to_receive;
+		//Allocate space for the datanode response
+		dfs_cm_block_t returned_block;
+		memset(&returned_block, 0, sizeof(returned_block));
+
+		//Receive the block from the datanode and extract its content
+		receive_data(datanode_socket, &returned_block, sizeof(returned_block));	
+
+		strcpy(file_block.content, returned_block.content);
+
+		block_list[count] = file_block;
 		count++;
 	}
 	
 	FILE *file = fopen(filename, "wb");
 
+	//Re-assemble the received blocks into the complete file
 	count = 0;
 	while(count < num_blocks){
-		fwrite(&(block_list[count]), DFS_BLOCK_SIZE, 1, file);
+
+		//Print received blocks
+		printf("Returned blocks\n");
+		printf("\tOwner name: %s\n", block_list[count].owner_name);
+		printf("\tDatanode ID: %d\n", block_list[count].dn_id);
+		printf("\tBlock ID: %d\n", block_list[count].block_id);
+		printf("\tContent: %s\n", block_list[count].content);
+
+		fwrite(&(block_list[count].content), sizeof(dfs_cm_block_t), 1, file);
 		count++;
 	}
-	//TODO: re-assemble the received blocks into the complete file
-
 	fclose(file);
-	free(response);
 	return 0;
 }
 
