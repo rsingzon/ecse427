@@ -110,7 +110,7 @@ void send_data(int socket, void* data, int size)
 	int num_bytes;
 
 	while( bytes_sent < size ){
-		num_bytes = send(socket, data, size, 0);
+		num_bytes = send(socket, data+bytes_sent, size, 0);
 			
 		if( num_bytes < 0 ){
 			perror("Failed to send data!\n");
@@ -138,7 +138,7 @@ void receive_data(int socket, void* data, int size)
 	int num_bytes;
 
 	while( bytes_received < size ){
-		num_bytes = recv(socket, data, size, 0);
+		num_bytes = recv(socket, data+bytes_received, size, 0);
 
 		if( num_bytes < 0 ){
 			perror("Failed to receive data!\n");

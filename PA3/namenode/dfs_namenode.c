@@ -36,7 +36,7 @@ int mainLoop(int server_socket)
 			printf("\tType: READ\n");	
 			printf("\tFile name: %s\n", request.file_name);
 		} else if(request.req_type == 1){
-			printf("\tType: WRITE");	
+			printf("\tType: WRITE\n");	
 			printf("\tFile name: %s\n", request.file_name);
 			printf("\tFile size: %d\n", request.file_size);
 		} else if(request.req_type == 2){
@@ -235,6 +235,8 @@ int get_file_receivers(int client_socket, dfs_cm_client_req_t request)
 	printf("Block num: %d\n", (*file_image)->blocknum);
 	printf("Unassigned: %d\n", first_unassigned_block_index);
 	printf("Iterations needed: %d\n", numIterations);
+
+
 	while(first_unassigned_block_index < numIterations){
 		next_data_node_index = next_data_node_index % MAX_DATANODE_NUM;
 		//Find a valid datanode
@@ -249,6 +251,8 @@ int get_file_receivers(int client_socket, dfs_cm_client_req_t request)
 		strcpy(file_block.owner_name, request.file_name);
 		
 		//The indices of the datanode list correspond to their id-1
+
+		//Assign datanode ID, ip address, and port to each block
 		file_block.dn_id = next_data_node_index + 1;
 		file_block.block_id = first_unassigned_block_index;
 		strcpy(file_block.loc_ip, dnlist[next_data_node_index]->ip);
@@ -265,18 +269,23 @@ int get_file_receivers(int client_socket, dfs_cm_client_req_t request)
 	}
 
 	//TODO: fill the response and send it back to the client
-	dfs_cm_file_res_t *response;
-	response = malloc(sizeof(dfs_cm_file_res_t));
+	dfs_cm_file_res_t response;
+	memset(&response, 0, sizeof(response));
 
-	response->query_result = **file_image;
+	response.query_result = **file_image;
 
-	printf("File name: %s\n", response->query_result.filename);
-	printf("File size: %d\n", response->query_result.file_size);
-	printf("Blocknum: %d\n", response->query_result.blocknum);
+	printf("File name: %s\n", response.query_result.filename);
+	printf("File size: %d\n", response.query_result.file_size);
+	printf("Blocknum: %d\n", response.query_result.blocknum);
 
-	send_data(client_socket, response, sizeof(dfs_cm_file_res_t));
+	printf("\tFILE BLOCK 0\n");
+	printf("\tDatanode ID: %d\n", response.query_result.block_list[0].dn_id);
+		printf("\tBlock ID:%d\n", response.query_result.block_list[0].block_id);
+		printf("\tIP: %s\n", response.query_result.block_list[0].loc_ip);
+		printf("\tPort: %d\n", response.query_result.block_list[0].loc_port);
+
+	send_data(client_socket, &response, sizeof(response));
 	printf("Response to client sent!\n");
-	free(response);
 	return 0;
 }
 
