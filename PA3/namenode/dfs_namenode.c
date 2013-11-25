@@ -344,14 +344,25 @@ int get_file_update_point(int client_socket, dfs_cm_client_req_t request)
 	int i = 0;
 	for (i = 0; i < MAX_FILE_COUNT; ++i)
 	{
+		//This searches for the file in the list of files with the same name
 		dfs_cm_file_t* file_image = file_images[i];
 		if (file_image == NULL) continue;
 		if (strcmp(file_image->filename, request.file_name) != 0) continue;
+
+		//TODO: fill the response and send it back to the client
 		dfs_cm_file_res_t response;
-		//TODO: fill the response and send it back to the client
-		// Send back the data block assignments to the client
 		memset(&response, 0, sizeof(response));
-		//TODO: fill the response and send it back to the client
+
+		//If the file size of the request is larger than that of the 
+		//file image, then allocate more datanodes in a round-robin fashion
+		if(file_image->file_size < request.file_size){
+
+		} else {
+			//No extra datanode allocation is necessary
+			response
+		}
+
+		send_data(client_socket, &response, sizeof(response));
 		return 0;
 	}
 	//FILE NOT FOUND

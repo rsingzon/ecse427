@@ -119,7 +119,7 @@ int read_block(int client_socket, const dfs_cli_dn_req_t *request)
 	printf("\tOwner name: %s\n", block_to_return.owner_name);
 	printf("\tDatanode ID: %d\n", block_to_return.dn_id);
 	printf("\tBlock ID: %d\n", block_to_return.block_id);
-	printf("\tContent: %s\n", block_to_return.content);
+//	printf("\tContent: %s\n", block_to_return.content);
 
 	send_data(client_socket, &block_to_return, sizeof(block_to_return));
 	return 0;

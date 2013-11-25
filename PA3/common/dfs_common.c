@@ -116,7 +116,7 @@ void send_data(int socket, void* data, int size)
 			perror("Failed to send data!\n");
 		} else {
 			bytes_sent += num_bytes;
-			printf("Bytes sent: %d\tTotal: %d\n", num_bytes, bytes_sent);
+//			printf("Bytes sent: %d\tTotal: %d\n", num_bytes, bytes_sent);
 		}
 	}
 }
@@ -144,7 +144,7 @@ void receive_data(int socket, void* data, int size)
 			perror("Failed to receive data!\n");
 		} else {
 			bytes_received += num_bytes;
-			printf("Bytes received: %d\tTotal: %d\n", num_bytes, bytes_received);
+//			printf("Bytes received: %d\tTotal: %d\n", num_bytes, bytes_received);
 		}
 
 	}

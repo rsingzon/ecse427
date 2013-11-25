@@ -29,9 +29,19 @@ int modify_file(char *ip, int port, const char* filename, int file_size, int sta
 
 	//TODO:fill the request and send
 	dfs_cm_client_req_t request;
+	memset(&request, 0, sizeof(request));
+
+	strcpy(request.filename, filename);
+	request.file_size = file_size;
+	request.req_type = 3;
+
+	send_data(namenode_socket, &request, sizeof(request));
 	
 	//TODO: receive the response
 	dfs_cm_file_res_t response;
+	memset(&response, 0, sizeof(response));
+
+	receive_data(namenode_socket, &response, sizeof(response));
 
 	//TODO: send the updated block to the proper datanode
 
@@ -102,8 +112,7 @@ int push_file(int namenode_socket, const char* local_path)
 
 		printf("\nDN IP: %s\n", file_block.loc_ip);
 		printf("DN Port: %d\n", file_block.loc_port);
-		printf("Content: %s\n", file_block.content);
-
+//		printf("Content: %s\n", file_block.content);
 
 		//Create a socket to communicate with the datanode
 		datanode_socket = create_client_tcp_socket(file_block.loc_ip, file_block.loc_port);
@@ -206,9 +215,9 @@ int pull_file(int namenode_socket, const char *filename)
 		printf("\tOwner name: %s\n", block_list[count].owner_name);
 		printf("\tDatanode ID: %d\n", block_list[count].dn_id);
 		printf("\tBlock ID: %d\n", block_list[count].block_id);
-		printf("\tContent: %s\n", block_list[count].content);
+//		printf("\tContent: %s\n", block_list[count].content);
 
-		fwrite(&(block_list[count].content), sizeof(dfs_cm_block_t), 1, file);
+		fwrite(&(block_list[count].content), DFS_BLOCK_SIZE, 1, file);
 		count++;
 	}
 	fclose(file);
