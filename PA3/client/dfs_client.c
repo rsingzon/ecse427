@@ -31,7 +31,7 @@ int modify_file(char *ip, int port, const char* filename, int file_size, int sta
 	dfs_cm_client_req_t request;
 	memset(&request, 0, sizeof(request));
 
-	strcpy(request.filename, filename);
+	strcpy(request.file_name, filename);
 	request.file_size = file_size;
 	request.req_type = 3;
 
@@ -43,7 +43,54 @@ int modify_file(char *ip, int port, const char* filename, int file_size, int sta
 
 	receive_data(namenode_socket, &response, sizeof(response));
 
-	//TODO: send the updated block to the proper datanode
+	dfs_cm_file_t file_info; 
+	memset(&file_info, 0, sizeof(file_info));
+
+	//Start writing at the block which contains start_addr
+	int start_block_index = start_addr % DFS_BLOCK_SIZE;
+
+	//End writing at the block which contains end_addr
+	int end_block_index = end_addr % DFS_BLOCK_SIZE;
+	int blocks_to_modify = end_block_index - start_block_index;
+
+	//Seek to the appropriate location in the file
+	fseek(file, start_addr, SEEK_SET);
+
+	//Send the updated block to the proper datanode
+	int block_index = start_block_index;
+	int count = 0;
+	while( count < blocks_to_modify ){
+
+		dfs_cm_block_t file_block;
+		memset(&file_block, 0, sizeof(file_block));
+
+		int datanode_socket = 0;
+
+		//Get the IP and port from the namenode response
+		file_block = file_info.block_list[block_index];
+
+		//Read data from file into the block
+		fread( &(file_block.content), DFS_BLOCK_SIZE, 1, file);
+
+		printf("\nDN IP: %s\n", file_block.loc_ip);
+		printf("DN Port: %d\n", file_block.loc_port);
+//		printf("Content: %s\n", file_block.content);
+
+		//Create a socket to communicate with the datanode
+		datanode_socket = create_client_tcp_socket(file_block.loc_ip, file_block.loc_port);
+     
+     	//Fill datanode request and send
+		dfs_cli_dn_req_t datanode_request;
+		memset(&datanode_request, 0, sizeof(datanode_request));
+
+		datanode_request.op_type = 1;
+		datanode_request.block = file_block;
+
+		send_data(datanode_socket, &datanode_request, sizeof(datanode_request));
+
+		count++;
+	}
+
 
 	fclose(file);
 	return 0;

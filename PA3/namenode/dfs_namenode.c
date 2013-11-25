@@ -359,7 +359,7 @@ int get_file_update_point(int client_socket, dfs_cm_client_req_t request)
 
 		} else {
 			//No extra datanode allocation is necessary
-			response
+			//response
 		}
 
 		send_data(client_socket, &response, sizeof(response));
