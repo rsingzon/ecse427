@@ -353,14 +353,63 @@ int get_file_update_point(int client_socket, dfs_cm_client_req_t request)
 		dfs_cm_file_res_t response;
 		memset(&response, 0, sizeof(response));
 
-		//If the file size of the request is larger than that of the 
-		//file image, then allocate more datanodes in a round-robin fashion
-		if(file_image->file_size < request.file_size){
+		//Get the number of blocks the request needs
+		int required_blocks = (request.file_size + (DFS_BLOCK_SIZE - 1)) / DFS_BLOCK_SIZE;
+
+		//If the request requires more blocks than what is available, 
+		//allocate more datanodes in a round-robin fashion
+		if(file_image->blocknum < required_blocks){
+
+			int blocks_to_allocate = required_blocks - file_image->blocknum;
+
+			//Get the datanode ID corresponding to the last allocated block
+			int last_allocated_block = 0;
+			last_allocated_block = file_image->blocknum;
+
+			int datanode_index = file_image->block_list[last_allocated_block].dn_id;
+			int first_unassigned_block_index = file_image->blocknum;
+
+			//The index of the datanode in the dnlist is dn_id - 1, so the next datanode
+			//will be at index dn_id
+
+			//Allocate blocks in a round robin fashion
+			while(blocks_to_allocate > 0){
+				datanode_index = datanode_index % MAX_DATANODE_NUM;
+
+				//Find a valid datanode
+				while(dnlist[datanode_index] == NULL){
+					printf("Incrementing dnlist\n");
+					datanode_index = (datanode_index + 1) % MAX_DATANODE_NUM;
+				}
+
+				dfs_cm_block_t file_block;
+				memset(&file_block, 0, sizeof(file_block));
+
+				strcpy(file_block.owner_name, request.file_name);
+
+				file_block.dn_id = datanode_index + 1;
+				file_block.block_id = first_unassigned_block_index;
+				strcpy(file_block.loc_ip, dnlist[datanode_index]->ip);
+				file_block.loc_port = dnlist[datanode_index]->port;
+
+				file_image->block_list[first_unassigned_block_index] = file_block;
+
+				printf("\tDatanode ID: %d\n", file_block.dn_id);
+				printf("\tBlock ID:%d\n", file_block.block_id);
+				printf("\tIP: %s\n", file_block.loc_ip);
+				printf("\tPort: %d\n", file_block.loc_port);
+
+
+				first_unassigned_block_index++;
+				blocks_to_allocate--;		
+			}
+
 
 		} else {
 			//No extra datanode allocation is necessary
-			//response
 		}
+
+		response.query_result = *file_image;	
 
 		send_data(client_socket, &response, sizeof(response));
 		return 0;
