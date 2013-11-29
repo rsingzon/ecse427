@@ -144,7 +144,7 @@ void receive_data(int socket, void* data, int size)
 			perror("Failed to receive data!\n");
 		} else {
 			bytes_received += num_bytes;
-//			printf("Bytes received: %d\tTotal: %d\n", num_bytes, bytes_received);
+		//	printf("Bytes received: %d\tTotal: %d\n", num_bytes, bytes_received);
 		}
 
 	}

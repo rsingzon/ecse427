@@ -5,6 +5,7 @@
 
 int test_case_1(char **argv, int op_type)
 {
+	printf("PRINTING HERE\n");
 	if (send_file_request(argv, "local_file", 1) == -1) 
 	{
 		return 1;
@@ -16,6 +17,7 @@ int test_case_1(char **argv, int op_type)
 	char *buf = (char *) malloc(sizeof(char) * DFS_BLOCK_SIZE);
 	char *buf_local = (char *) malloc(sizeof(char) * DFS_BLOCK_SIZE);
 	
+	printf("PRINTING 1\n");
 	sfs_reloadfs("d1/local_fs");
 	fd = sfs_open("/", "local_file_blk_0");
 	sfs_read(fd, buf, DFS_BLOCK_SIZE);
@@ -24,6 +26,7 @@ int test_case_1(char **argv, int op_type)
 	if (memcmp(buf_local, buf, DFS_BLOCK_SIZE) != 0) ret = 1;
 	if (ret == 0)
 	{
+		printf("PRINTING 2\n");
 		fseek(local_fp, 2 * DFS_BLOCK_SIZE, SEEK_SET); 
 		fd = sfs_open("/", "local_file_blk_2");
 		sfs_read(fd, buf, DFS_BLOCK_SIZE); 
@@ -33,6 +36,7 @@ int test_case_1(char **argv, int op_type)
 	}
 	if (ret == 0)
 	{
+		printf("PRINTING 3\n");
 		fseek(local_fp, 4 * DFS_BLOCK_SIZE, SEEK_SET);
 		fd = sfs_open("/", "local_file_blk_4");
 		sfs_read(fd, buf, DFS_BLOCK_SIZE); 
@@ -42,6 +46,7 @@ int test_case_1(char **argv, int op_type)
 	}
 	if (ret == 0)
 	{
+		printf("PRINTING 4\n");
 		fseek(local_fp, 6 * DFS_BLOCK_SIZE, SEEK_SET);
 		fd = sfs_open("/", "local_file_blk_6");
 		sfs_read(fd, buf, DFS_BLOCK_SIZE); 
@@ -51,6 +56,7 @@ int test_case_1(char **argv, int op_type)
 	}
 	sfs_close_storage();
 	
+	printf("PRINTING 5");
 	sfs_reloadfs("d2/local_fs");
 	fd = sfs_open("/", "local_file_blk_1");
 	sfs_read(fd, buf, DFS_BLOCK_SIZE);
@@ -60,6 +66,7 @@ int test_case_1(char **argv, int op_type)
 	if (memcmp(buf_local, buf, DFS_BLOCK_SIZE) != 0) ret = 1;
 	if (ret == 0)
 	{
+		printf("PRINTING 6");
 		fseek(local_fp, 3 * DFS_BLOCK_SIZE, SEEK_SET);
 		fd = sfs_open("/", "local_file_blk_3");
 		sfs_read(fd, buf, DFS_BLOCK_SIZE); 
@@ -69,6 +76,7 @@ int test_case_1(char **argv, int op_type)
 	}
 	if (ret == 0)
 	{
+		printf("PRINTING 7");
 		fseek(local_fp, 5 * DFS_BLOCK_SIZE, SEEK_SET);
 		fd = sfs_open("/", "local_file_blk_5");
 		sfs_read(fd, buf, DFS_BLOCK_SIZE); 
@@ -78,6 +86,7 @@ int test_case_1(char **argv, int op_type)
 	}
 	if (ret == 0)
 	{
+		printf("PRINTING 8");
 		fseek(local_fp, 7 * DFS_BLOCK_SIZE, SEEK_SET);
 		fd = sfs_open("/", "local_file_blk_7");
 		sfs_read(fd, buf, DFS_BLOCK_SIZE); 

@@ -22,7 +22,7 @@ int mainLoop(int server_socket)
 		unsigned int client_address_length = sizeof(client_address);
 		int client_socket = -1;
 		//TODO: accept the connection from the client and assign the return value to client_socket
-		printf("Waiting for client\n\n");
+//		printf("Waiting for client\n\n");
 		client_socket = accept(server_socket, (struct sockaddr*) &client_address, &client_address_length);
 
 		assert(client_socket != INVALID_SOCKET);
@@ -31,18 +31,18 @@ int mainLoop(int server_socket)
 		//TODO: receive requests from client and fill it in request
 		receive_data(client_socket, &request, sizeof(dfs_cm_client_req_t));
 
-		printf("CLIENT REQUEST RECEIVED\n");
+//		printf("CLIENT REQUEST RECEIVED\n");
 		if(request.req_type == 0){
-			printf("\tType: READ\n");	
-			printf("\tFile name: %s\n", request.file_name);
+//			printf("\tType: READ\n");	
+//			printf("\tFile name: %s\n", request.file_name);
 		} else if(request.req_type == 1){
-			printf("\tType: WRITE\n");	
-			printf("\tFile name: %s\n", request.file_name);
-			printf("\tFile size: %d\n", request.file_size);
+//			printf("\tType: WRITE\n");	
+//			printf("\tFile name: %s\n", request.file_name);
+//			printf("\tFile size: %d\n", request.file_size);
 		} else if(request.req_type == 2){
-			printf("\tType: QUERY\n");	
+//			printf("\tType: QUERY\n");	
 		} else if(request.req_type == 3){
-			printf("\tType: MODIFY\n");	
+//			printf("\tType: MODIFY\n");	
 		}
  		
 		requests_dispatcher(client_socket, request);
@@ -79,7 +79,7 @@ int start(int argc, char **argv)
 	pthread_t heartbeat_thread;
 	pthread_t *thread_pointer = create_thread( heartbeatService, NULL);
 	heartbeat_thread = *thread_pointer;
-	printf("Thread created\n");
+//	printf("Thread created\n");
 
 	int server_socket = INVALID_SOCKET;
 	//TODO: create a socket to listen the client requests and replace the value of server_socket with the socket's fd
@@ -195,7 +195,7 @@ int get_file_receivers(int client_socket, dfs_cm_client_req_t request)
 	while (file_image != end_file_image)
 	{
 		if (*file_image != NULL && strcmp((*file_image)->filename, request.file_name) == 0){
-			printf("FILE ALREADY EXISTS\n");
+	//		printf("FILE ALREADY EXISTS\n");
 			break;	
 		} 
 		++file_image;
@@ -213,7 +213,7 @@ int get_file_receivers(int client_socket, dfs_cm_client_req_t request)
 
 		if (file_image == end_file_image) return 1;
 		// Create the file entry
-		printf("CREATING NEW FILE\n");
+	//	printf("CREATING NEW FILE\n");
 		*file_image = (dfs_cm_file_t*)malloc(sizeof(dfs_cm_file_t));
 	   	//TA BUG
 	  //memset(*file_image, 0, sizeof(*file_image));
@@ -231,17 +231,17 @@ int get_file_receivers(int client_socket, dfs_cm_client_req_t request)
 	int next_data_node_index = 0;
 
 	//TODO:Assign data blocks to datanodes, round-robin style (see the Documents)
-	printf("\nBlocks to store: %d\n", block_count);
-	printf("Block num: %d\n", (*file_image)->blocknum);
-	printf("Unassigned: %d\n", first_unassigned_block_index);
-	printf("Iterations needed: %d\n", numIterations);
+//	printf("\nBlocks to store: %d\n", block_count);
+//	printf("Block num: %d\n", (*file_image)->blocknum);
+//	printf("Unassigned: %d\n", first_unassigned_block_index);
+//	printf("Iterations needed: %d\n", numIterations);
 
 
 	while(first_unassigned_block_index < numIterations){
 		next_data_node_index = next_data_node_index % MAX_DATANODE_NUM;
 		//Find a valid datanode
 		while(dnlist[next_data_node_index] == NULL){
-			printf("Incrementing dnlist index\n");
+//			printf("Incrementing dnlist index\n");
 			next_data_node_index = (next_data_node_index + 1) % MAX_DATANODE_NUM;
 		}
 
@@ -257,10 +257,10 @@ int get_file_receivers(int client_socket, dfs_cm_client_req_t request)
 		file_block.block_id = first_unassigned_block_index;
 		strcpy(file_block.loc_ip, dnlist[next_data_node_index]->ip);
 		file_block.loc_port = dnlist[next_data_node_index]->port;
-		printf("\tDatanode ID: %d\n", file_block.dn_id);
-		printf("\tBlock ID:%d\n", file_block.block_id);
-		printf("\tIP: %s\n", file_block.loc_ip);
-		printf("\tPort: %d\n", file_block.loc_port);
+//		printf("\tDatanode ID: %d\n", file_block.dn_id);
+//		printf("\tBlock ID:%d\n", file_block.block_id);
+//		printf("\tIP: %s\n", file_block.loc_ip);
+//		printf("\tPort: %d\n", file_block.loc_port);
 
 		(*file_image)->block_list[first_unassigned_block_index] = file_block;
 
@@ -274,18 +274,13 @@ int get_file_receivers(int client_socket, dfs_cm_client_req_t request)
 
 	response.query_result = **file_image;
 
-	printf("File name: %s\n", response.query_result.filename);
-	printf("File size: %d\n", response.query_result.file_size);
-	printf("Blocknum: %d\n", response.query_result.blocknum);
+//	printf("File name: %s\n", response.query_result.filename);
+//	printf("File size: %d\n", response.query_result.file_size);
+//	printf("Blocknum: %d\n", response.query_result.blocknum);
 
-	printf("\tFILE BLOCK 0\n");
-	printf("\tDatanode ID: %d\n", response.query_result.block_list[0].dn_id);
-		printf("\tBlock ID:%d\n", response.query_result.block_list[0].block_id);
-		printf("\tIP: %s\n", response.query_result.block_list[0].loc_ip);
-		printf("\tPort: %d\n", response.query_result.block_list[0].loc_port);
 
 	send_data(client_socket, &response, sizeof(response));
-	printf("Response to client sent!\n");
+//	printf("Response to client sent!\n");
 	return 0;
 }
 
@@ -308,14 +303,14 @@ int get_file_location(int client_socket, dfs_cm_client_req_t request)
 
 		response.query_result = *file_image;
 
-		printf("FILE FOUND\n");
-		printf("\tFilename: %s\n", response.query_result.filename);
-		printf("\tFile size: %d\n", response.query_result.file_size);
-		printf("\tNumber of blocks: %d\n", response.query_result.blocknum);
+	//	printf("FILE FOUND\n");
+	//	printf("\tFilename: %s\n", response.query_result.filename);
+	//	printf("\tFile size: %d\n", response.query_result.file_size);
+	//	printf("\tNumber of blocks: %d\n", response.query_result.blocknum);
 
 		send_data(client_socket, &response, sizeof(response));
 
-		printf("Read response sent to client!\n");
+	//	printf("Read response sent to client!\n");
 		return 0;
 	}
 
@@ -333,7 +328,7 @@ void get_system_information(int client_socket, dfs_cm_client_req_t request)
 	memset(system_status, 0, sizeof(dfs_system_status));
 	system_status->datanode_num = dncnt;
 
-	printf("Number of datanodes: %d\n\n", system_status->datanode_num);
+//	printf("Number of datanodes: %d\n\n", system_status->datanode_num);
 
 	send_data(client_socket, (void*)system_status, sizeof(dfs_system_status));
 	free(system_status);
@@ -359,6 +354,7 @@ int get_file_update_point(int client_socket, dfs_cm_client_req_t request)
 		//If the request requires more blocks than what is available, 
 		//allocate more datanodes in a round-robin fashion
 		if(file_image->blocknum < required_blocks){
+//			printf("Extra block allocation required!\n");	
 
 			int blocks_to_allocate = required_blocks - file_image->blocknum;
 
@@ -378,7 +374,7 @@ int get_file_update_point(int client_socket, dfs_cm_client_req_t request)
 
 				//Find a valid datanode
 				while(dnlist[datanode_index] == NULL){
-					printf("Incrementing dnlist\n");
+	//				printf("Incrementing dnlist\n");
 					datanode_index = (datanode_index + 1) % MAX_DATANODE_NUM;
 				}
 
@@ -394,16 +390,17 @@ int get_file_update_point(int client_socket, dfs_cm_client_req_t request)
 
 				file_image->block_list[first_unassigned_block_index] = file_block;
 
-				printf("\tDatanode ID: %d\n", file_block.dn_id);
-				printf("\tBlock ID:%d\n", file_block.block_id);
-				printf("\tIP: %s\n", file_block.loc_ip);
-				printf("\tPort: %d\n", file_block.loc_port);
+	//			printf("\tDatanode ID: %d\n", file_block.dn_id);
+	//			printf("\tBlock ID:%d\n", file_block.block_id);
+	//			printf("\tIP: %s\n", file_block.loc_ip);
+	//			printf("\tPort: %d\n", file_block.loc_port);
 
 
 				first_unassigned_block_index++;
 				blocks_to_allocate--;		
 			}
 
+			file_image->blocknum = file_image->blocknum + blocks_to_allocate;
 
 		} else {
 			//No extra datanode allocation is necessary
@@ -421,7 +418,7 @@ int get_file_update_point(int client_socket, dfs_cm_client_req_t request)
 int requests_dispatcher(int client_socket, dfs_cm_client_req_t request)
 {
 	//0 - read, 1 - write, 2 - query, 3 - modify
-	printf("*******\nRequest type: %d\n", request.req_type);
+//	printf("*******\nRequest type: %d\n", request.req_type);
 	switch (request.req_type)
 	{
 		case 0:

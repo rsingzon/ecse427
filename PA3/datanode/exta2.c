@@ -11,6 +11,7 @@ int get_block_file_path(char *path, const char *filename, int block_id)
 
 int ext_read_block(const char *filename, int block_id, void *buf)
 {
+
 	char *blk_path = (char *)malloc(sizeof(char) * strlen(filename) + 7);
 	int fd = 0;
 	get_block_file_path(blk_path, filename, block_id);
@@ -22,11 +23,15 @@ int ext_read_block(const char *filename, int block_id, void *buf)
 
 int ext_write_block(const char *filename, int block_id, void *buf)
 {
+	printf("Writing block\n");
 	char *blk_path = (char *)malloc(sizeof(char) * strlen(filename) + 7);
 	int fd = 0;
 	get_block_file_path(blk_path, filename, block_id);
+	printf("Got block file path\n");
 	int dirbid = sfs_mkdir("/");
+	printf("Made directory\n");
 	fd = sfs_open("/", blk_path);
+	printf("Opened file\n");
 	int a = sfs_write(fd, buf, DFS_BLOCK_SIZE);
 	printf("successfully write %s to file %d\n", blk_path, fd);
 	sfs_print_info();

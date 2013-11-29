@@ -257,6 +257,7 @@ int test_case_8(char **argv, int op_type)
 	char *buf = (char *) malloc(sizeof(char) * DFS_BLOCK_SIZE);
 	if (modify_file(argv[1], atoi(argv[2]), "local_file", 2048, 1024, 2047) == -1) 
 	{
+		printf("Failed on file modification\n");
 		fclose(local_fp);
 		return 1; 
 	}
@@ -265,7 +266,10 @@ int test_case_8(char **argv, int op_type)
 	str_arr[1] = blk_1;
 	for (; i < 2; i++) {
 		FILE *fp = fopen(str_arr[i], "rb");
-		if (fp == NULL) return 1;
+		if (fp == NULL){
+			printf("Null file pointer\n");
+			return 1;	
+		} 
 		memset(buf, 0, DFS_BLOCK_SIZE);
 		memset(local_buf, 0, DFS_BLOCK_SIZE);
 		fread(buf, DFS_BLOCK_SIZE, 1, fp);

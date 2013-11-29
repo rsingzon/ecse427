@@ -27,15 +27,16 @@ int mainLoop()
 		int client_socket = -1;
 
 		//TODO: accept the client request
-		printf("Waiting for client\n\n");
+//		printf("Waiting for client\n\n");
 		client_socket = accept(server_socket, (struct sockaddr*) &client_address, &client_address_length);
-		printf("CLIENT ACCEPTED!\n");
+//		printf("CLIENT ACCEPTED!\n");
 				
 		assert(client_socket != INVALID_SOCKET);
 		dfs_cli_dn_req_t request;
 		//TODO: receive data from client_socket, and fill it to request
 
 		receive_data(client_socket, &request, sizeof(request));
+//		printf("Finished receiving data\n");	
 
 		requests_dispatcher(client_socket, request);
 		close(client_socket);
@@ -115,10 +116,10 @@ int read_block(int client_socket, const dfs_cli_dn_req_t *request)
 	block_to_return.block_id = request->block.block_id;
 	strcpy(block_to_return.content, buffer);
 
-	printf("Block to return\n");
-	printf("\tOwner name: %s\n", block_to_return.owner_name);
-	printf("\tDatanode ID: %d\n", block_to_return.dn_id);
-	printf("\tBlock ID: %d\n", block_to_return.block_id);
+//	printf("Block to return\n");
+//	printf("\tOwner name: %s\n", block_to_return.owner_name);
+//	printf("\tDatanode ID: %d\n", block_to_return.dn_id);
+//	printf("\tBlock ID: %d\n", block_to_return.block_id);
 //	printf("\tContent: %s\n", block_to_return.content);
 
 	send_data(client_socket, &block_to_return, sizeof(block_to_return));

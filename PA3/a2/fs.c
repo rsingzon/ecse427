@@ -30,13 +30,16 @@ static fd_struct_t fdtable[SFS_MAX_OPENED_FILES];
  */
 static void sfs_flush_freemap()
 {
+	printf("Number of freemap blocks: %d\n", sb.nfreemap_blocks); 
 	blkid bid = 1;
 	char *p = (char *)freemap;
 
-	do{
+	do{	
+		printf("Looping\n");
 		sfs_write_block(p, bid);
 		bid++;
-	} while(bid < sb.nfreemap_blocks);
+	} while(bid < 1);
+	printf("Exited loop\n");
 }
 
 /* 
@@ -44,6 +47,7 @@ static void sfs_flush_freemap()
  */
 static blkid sfs_alloc_block()
 {
+	printf("Allocating a block\n");
 	u32 size = sb.nfreemap_blocks * BLOCK_SIZE / sizeof(u32);	
 	//  size = 1 * 512 / 4 = 128 four-byte sections = 4096 bits
 
@@ -53,6 +57,7 @@ static blkid sfs_alloc_block()
 	
 	//Search each freemap block
 	for(fm_blk = 0; fm_blk < sb.nfreemap_blocks; fm_blk++){
+		printf("Searching freemap\n");
 		//Read the freemap block located at the block ID
 		int count;
 		int freemap_id = fm_blk + 1;
@@ -61,6 +66,7 @@ static blkid sfs_alloc_block()
 		
 		//Search each index of the freemap block
 		for(fm_byte = 0; fm_byte < BLOCK_SIZE; fm_byte++){
+			printf("Searching indices of freemap\n");
 
 			u32 bitmap = freemap[fm_byte];	
 
@@ -72,6 +78,7 @@ static blkid sfs_alloc_block()
 				
 				//Search each bit of the freemap block
 				while(count < SFS_NBITS_IN_FREEMAP_ENTRY){
+					printf("Searching bits of freemap\n");
 					
 					result = bitmap & mask;
 
@@ -80,6 +87,7 @@ static blkid sfs_alloc_block()
 						count++;
 						
 					} else{
+						printf("Free block found\n");
 						free_block_id = fm_byte * SFS_NBITS_IN_FREEMAP_ENTRY + count;
 
 						//Set the bit and flush to disk
@@ -96,8 +104,12 @@ static blkid sfs_alloc_block()
 
 						return free_block_id;
 					}
+
+					printf("Stopped searching bits of freemap\n");
 				}
 			}
+
+			printf("Stopped searching indices of freemap\n");	
 		}
 	}
 	return 0;
@@ -367,6 +379,7 @@ sfs_superblock_t *sfs_print_info()
  */
 int sfs_mkdir(char *dirname)
 {
+	printf("Making a directory\n");
 	//Check if the directory has a valid name
 	if(sizeof(dirname) > 120){
 		printf("Dir name exceeds max allowed characters.\n");
@@ -377,6 +390,7 @@ int sfs_mkdir(char *dirname)
 	if(sfs_find_dir(dirname) != 0){
 		return -1;
 	} else{	
+		printf("Directory doesn't exist\n");
 		//Initialize variables
 		blkid next_dir_id;
 		char block_ptr[BLOCK_SIZE];
@@ -395,6 +409,7 @@ int sfs_mkdir(char *dirname)
 			sfs_write_block(&sb, 0);
 		} else{
 			while(next_dir_id != 0){	
+				printf("Stuck making a directory\n");	
 				sfs_read_block(block_ptr, next_dir_id);
 				dir = *(sfs_dirblock_t*)block_ptr;
 
@@ -828,7 +843,7 @@ int sfs_write(int fd, void *buf, int length)
 	int bid_count = 0;
 	//The block numbers should already be known by this part
 	while(remaining > 0){
-
+		printf("Stuck in a loop\n");
 		to_copy = 0;
 		sfs_read_block(block_ptr, bids[bid_count]);
 
