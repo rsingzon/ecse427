@@ -1,36 +1,35 @@
 #include "common/dfs_common.h"
 #include <pthread.h>
 /**
- * create a thread and activate it
+ * Create a thread and activate it
  * entry_point - the function exeucted by the thread
  * args - argument of the function
- * return the handler of the thread
+ * Return the handler of the thread
  */
 inline pthread_t * create_thread(void * (*entry_point)(void*), void *args)
 {
-	//TODO: create the thread and run it
+	//Create the thread and run it
 	pthread_t *thread;
 	thread = malloc(sizeof(pthread_t));
 
-	//pthread_create(thread,attr,start_routine,arg);
 	pthread_create(thread, NULL, entry_point, args);
 
 	return thread;
 }
 
 /**
- * create a socket and return
+ * Create a socket and return
  */
 int create_tcp_socket()
 {
 	int socket_fd = socket(PF_INET, SOCK_STREAM, 0);
-	//TODO:create the socket and return the file descriptor 
+	//Create the socket and return the file descriptor 
 	return socket_fd;
 }
 
 /**
- * create the socket and connect it to the destination address
- * return the socket fd
+ * Create the socket and connect it to the destination address
+ * Return the socket fd
  */
 int create_client_tcp_socket(char* address, int port)
 {
@@ -49,8 +48,7 @@ int create_client_tcp_socket(char* address, int port)
 	address_int = inet_addr(address);
 	serv_addr->sin_addr.s_addr = address_int;
 
-	//TODO: connect it to the destination port
-	//printf("Client: Attempting to connect\n");
+	//Connect to the destination port
 	if ( connect(socket, (const struct sockaddr *)serv_addr, sizeof(*serv_addr)) < 0 ){
 		perror("Client failed to connect!\n");
 		exit(1);
@@ -61,7 +59,7 @@ int create_client_tcp_socket(char* address, int port)
 }
 
 /**
- * create a socket listening on the certain local port and return
+ * Create a socket listening on the certain local port and return
  */
 int create_server_tcp_socket(int port)
 {
@@ -87,7 +85,7 @@ int create_server_tcp_socket(int port)
 		//exit(1);
 	}
 
-	//TODO: listen on local port
+	//Listen on local port
 	listen(socket, 5);
 	printf("Bound and listening!\n");
 
@@ -104,7 +102,7 @@ void send_data(int socket, void* data, int size)
 	assert(data != NULL);
 	assert(size >= 0);
 	if (socket == INVALID_SOCKET) return;
-	//TODO: send data through socket
+	//Send data through socket
 
 	int bytes_sent = 0;
 	int num_bytes;
@@ -116,13 +114,12 @@ void send_data(int socket, void* data, int size)
 			perror("Failed to send data!\n");
 		} else {
 			bytes_sent += num_bytes;
-//			printf("Bytes sent: %d\tTotal: %d\n", num_bytes, bytes_sent);
 		}
 	}
 }
 
 /**
- * receive data via socket
+ * Receive data via socket
  * socket - the connecting socket
  * data - the buffer to store the data
  * size - the size of buffer in byte
@@ -132,7 +129,7 @@ void receive_data(int socket, void* data, int size)
 	assert(data != NULL);
 	assert(size >= 0);
 	if (socket == INVALID_SOCKET) return;
-	//TODO: fetch data via socket
+	//Fetch data via socket
 
 	int bytes_received = 0;
 	int num_bytes;
@@ -144,7 +141,6 @@ void receive_data(int socket, void* data, int size)
 			perror("Failed to receive data!\n");
 		} else {
 			bytes_received += num_bytes;
-		//	printf("Bytes received: %d\tTotal: %d\n", num_bytes, bytes_received);
 		}
 
 	}

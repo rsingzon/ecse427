@@ -172,7 +172,7 @@ static void sfs_resize_file(int fd, u32 new_size)
 	blkid frame_bid = inode.first_frame;
 	sfs_inode_frame_t frame;
 
-	/* TODO: check if new frames are required */
+	/*Check if new frames are required */
 	int count = old_nframe;
 	while(count < new_nframe){
 		
@@ -359,17 +359,6 @@ sfs_superblock_t *sfs_print_info()
 	printf("First dir: %d\n", sb.first_dir);
 	printf("Num freemap blocks: %d\n\n", sb.nfreemap_blocks);
 
-	//Print freeblock information
-/*	printf("FREEBLOCK INFO\n");
-	sfs_read_block(freemap, 1);
-	
-	int i;
-	for(i = 0; i < BLOCK_SIZE; i++){
-		if(freemap[i] != 0){
-			printf("freemap[%d] = %#x\n", i, freemap[i]);		
-		}
-	}
-*/	
 	return &sb;
 }
 
@@ -451,7 +440,7 @@ int sfs_mkdir(char *dirname)
  */
 int sfs_rmdir(char *dirname)
 {
-	/* TODO: check if the dir exists */
+	//Check if the dir exists
 	blkid dir_bid = sfs_find_dir(dirname);
 
 	if(dir_bid == 0){
@@ -521,7 +510,7 @@ int sfs_rmdir(char *dirname)
  */
 int sfs_lsdir()
 {
-	/* TODO: go thru the linked list */
+	//Go through the linked list
 	int num_dir = 0;
 	char block_ptr[BLOCK_SIZE];
 	sfs_dirblock_t dir;
@@ -711,7 +700,7 @@ int sfs_remove(int fd_num)
 	dir.inodes[inode_bid] = 0;
 	sfs_write_block(&dir, dir_bid);
 
-	/* TODO: free inode and all its frames */
+	// Free inode and all its frames
 	sfs_inode_t inode;
 	sfs_read_block(block_ptr, inode_bid);
 	inode = *(sfs_inode_t*)block_ptr;
@@ -739,7 +728,7 @@ int sfs_remove(int fd_num)
 		next_frame = frame.next;
 	}
 
-	/* TODO: close the file */
+	//Close the file
 	sfs_free_block(inode_bid);
 	//Reset the file description to default
 	
@@ -756,7 +745,7 @@ int sfs_remove(int fd_num)
  */
 int sfs_ls()
 {
-	/* TODO: nested loop: traverse all dirs and all containing files*/
+	// Nested loop: traverse all dirs and all containing files
 	sfs_read_block(&sb, 0);
 	blkid next_dir = sb.first_dir;
 
@@ -820,7 +809,7 @@ int sfs_write(int fd, void *buf, int length)
 	inode = *(sfs_inode_t*)inode_ptr;
 	blkid frame_bid = inode.first_frame;
 
-	/* TODO: check if we need to resize */
+	// Check if we need to resize 
 	sfs_inode_frame_t frame;
 	sfs_read_block(tmp, frame_bid);
 	frame = *(sfs_inode_frame_t*)tmp;
@@ -831,10 +820,10 @@ int sfs_write(int fd, void *buf, int length)
 		sfs_resize_file(fd, new_size);
 	}
 
-	/* TODO: get the block ids of all contents (using sfs_get_file_content() */
+	// Get the block ids of all contents (using sfs_get_file_content() 
 	int num_blocks = sfs_get_file_content(bids, fd, cur, length);
 
-	/* TODO: main loop, go through every block, copy the necessary parts
+	/* Main loop, go through every block, copy the necessary parts
 	   to the buffer, consult the hint in the document. Do not forget to 
 	   flush to the disk.
 	*/
